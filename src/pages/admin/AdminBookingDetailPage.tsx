@@ -133,7 +133,7 @@ export const AdminBookingDetailPage = () => {
   }, [outputFotos])
 
   const onDrop = async (files: File[]) => {
-    if (!files.length) return
+    if (!files.length || !bookingId) return
     setProcessingUpload(true)
     const uploaded = await uploadFotos(files, bookingId, uploadBucket)
     if (uploadBucket === 'output') {
@@ -171,7 +171,7 @@ export const AdminBookingDetailPage = () => {
     setSelectedFoto(null)
   }
 
-  if (!hasBooking) {
+  if (!booking || !bookingId) {
     return <Navigate to="/admin/bookings" replace />
   }
 
