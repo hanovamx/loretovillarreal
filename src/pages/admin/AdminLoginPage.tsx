@@ -36,22 +36,24 @@ export const AdminLoginPage = () => {
       <Card className="relative w-full max-w-4xl overflow-hidden border border-slate-200 p-0 shadow-2xl">
         <div className="grid grid-cols-1 md:grid-cols-2">
           <div className="relative hidden bg-slate-900 md:block">
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-900/90 to-slate-900/80" />
-          <img
-            src={getBrandingImage(BRANDING_HERO_IMAGES, 'admin-hero')}
-            alt="Loreto Villarreal Studio"
-            className="h-full w-full object-cover opacity-90"
-          />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/40" />
+            <img
+              src={getBrandingImage(BRANDING_HERO_IMAGES, 'admin-hero')}
+              alt="Loreto Villarreal Studio"
+              className="h-full w-full object-cover opacity-75"
+            />
             <div className="absolute inset-0 flex flex-col justify-between p-10 text-white">
               <div>
-                <p className="text-xs uppercase tracking-[0.22em] text-white/70">Loreto Villarreal</p>
-                <h1 className="mt-6 text-3xl font-semibold tracking-[0.5em]">STUDIO</h1>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
+                  Loreto Villarreal
+                </p>
+                <h1 className="mt-6 text-3xl font-heading tracking-[0.42em] text-white">STUDIO</h1>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-[0.22em] text-white/60">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
                   Plataforma omnicanal
                 </p>
-                <p className="mt-4 text-base uppercase tracking-[0.22em] text-white/80">
+                <p className="mt-4 text-sm uppercase tracking-[0.14em] text-white/70">
                   Gestión de clientes • AI tagging automático • 4 buckets
                 </p>
               </div>
@@ -92,9 +94,18 @@ export const AdminLoginPage = () => {
                 {loading ? 'Ingresando…' : 'Entrar'}
               </Button>
             </form>
-            <p className="mt-10 text-[10px] uppercase tracking-[0.14em] text-slate-400">
-              Demo interno • Fotos simuladas • AI tagging automático
-            </p>
+            <div className="mt-10 space-y-3 text-sm text-slate-500">
+              <p className="text-xs uppercase tracking-[0.12em] text-slate-400">
+                Demo interno • Fotos simuladas • AI tagging automático
+              </p>
+              <button
+                onClick={() => (window.location.href = '/cliente/login')}
+                className="text-sm font-semibold text-slate-500 underline-offset-4 hover:text-slate-900 hover:underline"
+                type="button"
+              >
+                Ir al portal del cliente →
+              </button>
+            </div>
           </div>
         </div>
       </Card>
