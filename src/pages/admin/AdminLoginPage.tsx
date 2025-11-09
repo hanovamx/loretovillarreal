@@ -1,6 +1,6 @@
 import type { FormEvent } from 'react'
 import { useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import Button from '../../components/common/Button'
 import { BRANDING_HERO_IMAGES, getBrandingImage } from '../../constants/branding'
@@ -9,6 +9,7 @@ import { useAuthStore } from '../../stores/authStore'
 
 export const AdminLoginPage = () => {
   const { loginAdmin, isAuthenticated, userType } = useAuthStore()
+  const navigate = useNavigate()
   const [email, setEmail] = useState('admin@loretovillarreal.studio')
   const [password, setPassword] = useState('demo123')
   const [loading, setLoading] = useState(false)
@@ -99,7 +100,7 @@ export const AdminLoginPage = () => {
                 Demo interno • Fotos simuladas • AI tagging automático
               </p>
               <button
-                onClick={() => (window.location.href = '/cliente/login')}
+                onClick={() => navigate('/cliente/login')}
                 className="text-sm font-semibold text-slate-500 underline-offset-4 hover:text-slate-900 hover:underline"
                 type="button"
               >
