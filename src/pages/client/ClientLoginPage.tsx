@@ -51,74 +51,99 @@ export const ClientLoginPage = () => {
           </div>
         </div>
         <div className="flex items-center justify-center bg-background px-6 py-10 md:px-12">
-          <div className="w-full max-w-lg space-y-8">
-            <div>
-              <p className="text-xs uppercase tracking-[0.22em] text-slate-400">
-                Accede a tus fotografías
-              </p>
-              <h2 className="mt-3 text-2xl font-semibold uppercase tracking-[0.22em] text-slate-900">
-                Experiencia omnicanal
-              </h2>
+          <div className="w-full max-w-4xl">
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-10">
+              <div className="flex-1 space-y-6">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.22em] text-slate-400">
+                    Accede a tus fotografías
+                  </p>
+                  <h2 className="mt-3 text-2xl font-semibold uppercase tracking-[0.22em] text-slate-900">
+                    Experiencia omnicanal
+                  </h2>
+                </div>
+
+                <Card className="border border-slate-200">
+                  <form className="space-y-5" onSubmit={handleSubmit}>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.14em] text-slate-400">
+                        Acceso temporal (180 días)
+                      </p>
+                      <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-slate-500">
+                        Visualiza y descarga todas tus fotos entregadas.
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                        Correo electrónico
+                      </label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
+                        required
+                        className="mt-2 w-full rounded-full border border-slate-200 bg-white px-6 py-3 text-xs uppercase tracking-[0.16em] text-slate-600 outline-none transition focus:border-slate-900"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                        Contraseña temporal
+                      </label>
+                      <input
+                        type="password"
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                        required
+                        className="mt-2 w-full rounded-full border border-slate-200 bg-white px-6 py-3 text-xs uppercase tracking-[0.16em] text-slate-600 outline-none transition focus:border-slate-900"
+                      />
+                    </div>
+                    <Button type="submit" tone="secondary" className="w-full" disabled={loading}>
+                      {loading ? 'Ingresando…' : 'Acceder a mis fotos'}
+                    </Button>
+                    <p className="text-[10px] uppercase tracking-[0.14em] text-emerald-500">
+                      ✓ Acceso vigente durante 180 días
+                    </p>
+                  </form>
+                </Card>
+              </div>
+
+              <div className="flex-1">
+                <Card className="h-full border border-amber-300 bg-gradient-to-br from-amber-50 via-white to-amber-100 p-6">
+                  <span className="inline-flex items-center rounded-full bg-amber-500 px-3 py-1 text-[10px] uppercase tracking-[0.14em] text-white">
+                    Premium
+                  </span>
+                  <h3 className="mt-4 text-2xl font-heading uppercase tracking-[0.22em] text-amber-600">
+                    Plan Premium Anual
+                  </h3>
+                  <p className="mt-4 text-sm text-amber-700">
+                    Lleva tu experiencia a la nube permanente del estudio. Conserva cada sesión sin
+                    límite de tiempo y desbloquea herramientas exclusivas.
+                  </p>
+                  <ul className="mt-6 space-y-3 text-sm text-amber-700">
+                    <li>• Almacenamiento permanente y seguro</li>
+                    <li>• Descargas ilimitadas en máxima calidad</li>
+                    <li>• IA avanzada para búsqueda por rostros y emociones</li>
+                    <li>• Compartir álbumes privados con invitados</li>
+                    <li>• Soporte prioritario y sesiones sorpresa</li>
+                  </ul>
+                  <div className="mt-8">
+                    <p className="text-2xl font-heading font-semibold text-amber-600">$5,000 MXN / año</p>
+                    <p className="text-xs uppercase tracking-[0.12em] text-amber-500">
+                      o $480 MXN al mes con pago anual
+                    </p>
+                  </div>
+                  <Button
+                    tone="ghost"
+                    className="mt-8 w-full border-amber-500 text-amber-600 hover:bg-amber-100 hover:text-amber-700"
+                  >
+                    Obtener Plan Premium
+                  </Button>
+                  <p className="mt-4 text-[11px] uppercase tracking-[0.12em] text-amber-600">
+                    Ideal para familias y clientes que desean un archivo fotográfico eterno.
+                  </p>
+                </Card>
+              </div>
             </div>
-
-            <Card className="border border-slate-200">
-              <form className="space-y-5" onSubmit={handleSubmit}>
-                <div>
-                  <p className="text-xs uppercase tracking-[0.14em] text-slate-400">
-                    Acceso temporal (180 días)
-                  </p>
-                  <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-slate-500">
-                    Visualiza y descarga todas tus fotos entregadas.
-                  </p>
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-                    Correo electrónico
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    required
-                    className="mt-2 w-full rounded-full border border-slate-200 bg-white px-6 py-3 text-xs uppercase tracking-[0.16em] text-slate-600 outline-none transition focus:border-slate-900"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-                    Contraseña temporal
-                  </label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    required
-                    className="mt-2 w-full rounded-full border border-slate-200 bg-white px-6 py-3 text-xs uppercase tracking-[0.16em] text-slate-600 outline-none transition focus:border-slate-900"
-                  />
-                </div>
-                <Button type="submit" tone="secondary" className="w-full" disabled={loading}>
-                  {loading ? 'Ingresando…' : 'Acceder a mis fotos'}
-                </Button>
-                <p className="text-[10px] uppercase tracking-[0.14em] text-emerald-500">
-                  ✓ Acceso vigente durante 180 días
-                </p>
-              </form>
-            </Card>
-
-            <Card className="border border-amber-300 bg-amber-50/80">
-              <p className="inline-flex items-center rounded-full bg-amber-500 px-3 py-1 text-[10px] uppercase tracking-[0.14em] text-white">
-                Premium
-              </p>
-              <h3 className="mt-4 text-xl font-semibold uppercase tracking-[0.22em] text-amber-600">
-                Plan Premium Anual
-              </h3>
-              <p className="mt-3 text-xs uppercase tracking-[0.16em] text-amber-600">
-                $5,000 MXN al año • Almacenamiento permanente • Descargas ilimitadas • IA avanzada •
-                Compartir álbumes
-              </p>
-              <Button tone="ghost" className="mt-5 w-full text-amber-600 hover:text-amber-700">
-                Obtener Plan Premium
-              </Button>
-            </Card>
           </div>
         </div>
       </div>
