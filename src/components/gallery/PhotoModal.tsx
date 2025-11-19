@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { LuDownload, LuHeart, LuMessageSquare, LuMoveRight, LuShoppingCart, LuTrash2, LuX } from 'react-icons/lu'
-import { formatISO } from 'date-fns'
 import Badge from '../common/Badge'
 import Button from '../common/Button'
 import type { BucketType, Foto } from '../../types'
@@ -266,7 +265,7 @@ export const PhotoModal = ({
                 ) : null}
                 {clientView && onToggleCarrito ? (
                   <Button
-                    tone={estaEnCarrito ? 'success' : 'secondary'}
+                    tone={estaEnCarrito ? 'primary' : 'secondary'}
                     size="sm"
                     iconLeft={<LuShoppingCart />}
                     onClick={onToggleCarrito}
