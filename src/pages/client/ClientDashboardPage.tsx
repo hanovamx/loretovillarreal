@@ -1,4 +1,5 @@
 import { Navigate, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { LuCalendarDays, LuImage, LuMapPin, LuSparkles } from 'react-icons/lu'
 import { format, isBefore, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -13,6 +14,7 @@ import { getDaysLeftForCliente } from '../../data/mockData'
 import { BRANDING_PORTRAIT_IMAGES, getBrandingImage } from '../../constants/branding'
 
 export const ClientDashboardPage = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const user = useAuthStore((state) => state.user)
   const getClienteById = useClienteStore((state) => state.getClienteById)
@@ -46,12 +48,11 @@ export const ClientDashboardPage = () => {
             <p className="text-sm font-medium text-slate-500">
               Hola, {cliente?.nombre_completo?.split(' ')[0]}
             </p>
-            <h1 className="mt-2 text-3xl font-heading font-semibold tracking-[0.32em] text-slate-900">
-              Tus recuerdos están listos
+            <h1 className="mt-2 text-3xl font-heading font-semibold tracking-[0.16em] text-slate-900">
+              {t('dashboard.title')}
             </h1>
             <p className="mt-3 max-w-xl text-sm text-slate-600">
-              Explora tus sesiones con filtros inteligentes de IA, descarga tus favoritos y comparte
-              los momentos especiales con quien tú quieras.
+              {t('dashboard.description')}
             </p>
           </div>
           {user.subscription === 'free_180_days' && accessDays !== null ? (
@@ -60,7 +61,7 @@ export const ClientDashboardPage = () => {
               <p className="mt-2 text-3xl font-heading font-semibold tracking-[0.18em]">
                 {accessDays} días
               </p>
-              <button className="mt-4 inline-flex items-center gap-2 rounded-full border border-amber-400 px-4 py-2 text-xs uppercase tracking-[0.1em] transition hover:bg-amber-100">
+              <button className="mt-4 inline-flex items-center gap-2 rounded-full border border-amber-400 px-4 py-2 text-xs uppercase tracking-[0.05em] transition hover:bg-amber-100">
                 <LuSparkles /> Upgrade a Premium
               </button>
             </div>
@@ -70,14 +71,14 @@ export const ClientDashboardPage = () => {
 
       <section className="grid gap-6 md:grid-cols-3">
         <MetricCard
-          title="Mis sesiones"
+          title={t('dashboard.mySessions')}
           value={bookings.length}
           subValue="Historial completo"
           icon={<LuCalendarDays />}
           accent="primary"
         />
         <MetricCard
-          title="Fotografías disponibles"
+          title={t('session.photosAvailable')}
           value={totalFotos}
           subValue="Con AI tagging"
           icon={<LuImage />}
@@ -95,7 +96,7 @@ export const ClientDashboardPage = () => {
       <section>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-500">Mis sesiones</p>
+            <p className="text-sm font-medium text-slate-500">{t('dashboard.mySessions')}</p>
             <p className="text-xs text-slate-400">
               Accede a cualquier sesión para explorar filtros inteligentes, insights y descargas.
             </p>
@@ -110,7 +111,7 @@ export const ClientDashboardPage = () => {
         <div className="mt-6 grid gap-6 lg:grid-cols-[1.6fr,1fr]">
           <div className="grid gap-6 sm:grid-cols-2">
             {bookings.map((booking) => {
-              const cover = getFotosByBooking(booking.id, 'output')[0]
+              const cover = getFotosByBooking(booking.id, 'index')[0]
               const bookingDate = format(new Date(booking.fecha_sesion), "d 'de' MMMM yyyy", { locale: es })
               return (
                 <div
@@ -140,7 +141,7 @@ export const ClientDashboardPage = () => {
                       <LuMapPin className="text-slate-400" /> {booking.ubicacion}
                     </p>
                     <p>{booking.total_fotos_customer_facing} fotografías listas para descargar.</p>
-                    <button className="rounded-full bg-slate-900 px-4 py-2 text-xs uppercase tracking-[0.1em] text-white">
+                    <button className="rounded-full bg-slate-900 px-4 py-2 text-xs uppercase tracking-[0.05em] text-white">
                       Ver fotos →
                     </button>
                   </div>
@@ -155,7 +156,7 @@ export const ClientDashboardPage = () => {
             </p>
             <div className="mt-4 space-y-5">
               <div>
-                <h4 className="text-xs uppercase tracking-[0.1em] text-slate-500">Próximas sesiones</h4>
+                <h4 className="text-xs uppercase tracking-[0.05em] text-slate-500">Próximas sesiones</h4>
                 <ul className="mt-2 space-y-2">
                   {upcomingBookings.length === 0 ? (
                     <li className="text-xs text-slate-400">
@@ -183,7 +184,7 @@ export const ClientDashboardPage = () => {
                 </ul>
               </div>
               <div>
-                <h4 className="text-xs uppercase tracking-[0.1em] text-slate-500">Sesiones recientes</h4>
+                <h4 className="text-xs uppercase tracking-[0.05em] text-slate-500">Sesiones recientes</h4>
                 <ul className="mt-2 space-y-2">
                   {recentBookings.length === 0 ? (
                     <li className="text-xs text-slate-400">Aún no registramos sesiones anteriores.</li>

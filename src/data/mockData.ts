@@ -6,6 +6,7 @@ import type {
   Cliente,
   FaceProfile,
   Foto,
+  PaqueteServicio,
   SessionTipo,
   SubscriptionStatus,
 } from '../types'
@@ -16,8 +17,8 @@ faker.seed(2025)
 
 const CLIENT_COUNT = 50
 const BOOKING_COUNT = 80
-const MIN_OUTPUT_PHOTOS = 14
-const MAX_OUTPUT_PHOTOS = 28
+const MIN_INDEX_PHOTOS = 14
+const MAX_INDEX_PHOTOS = 28
 
 const estados = ['Nuevo León', 'Ciudad de México', 'Jalisco', 'Querétaro', 'Coahuila'] as const
 const ubicaciones = [
@@ -52,9 +53,9 @@ const clientTypes: Array<'individual' | 'familia' | 'empresa'> = [
 
 const bookingStatusDistribution: Booking['status'][] = [
   ...Array(50).fill('entregado'),
-  ...Array(15).fill('completado'),
-  ...Array(10).fill('programado'),
-  ...Array(5).fill('procesando'),
+  ...Array(15).fill('seleccion_cliente'),
+  ...Array(10).fill('sesion_agendada'),
+  ...Array(5).fill('index_preparado'),
 ]
 
 const bookingTypeDistribution: SessionTipo[] = [
@@ -167,6 +168,11 @@ const generateBooking = (idx: number, cliente: Cliente): Booking => {
     fecha_creacion: formatISO(subDays(fechaSesion, randomInt(10, 30))),
     fecha_entrega: delivered ? formatISO(subDays(new Date(), randomInt(2, 60))) : null,
     notas_internas: faker.lorem.sentence(),
+    paquete_id: randomBool(0.7) ? `paq_${randomInt(1, 3)}` : null,
+    rrss_authorized: randomBool(0.6),
+    banco_imagenes_authorized: randomBool(0.4),
+    fotos_extra_count: 0,
+    costo_extra: 0,
   }
 }
 
@@ -190,6 +196,11 @@ demoBookingTemplates.forEach((template) => {
     fecha_creacion: formatISO(subDays(sessionDate, 14)),
     fecha_entrega: formatISO(subDays(sessionDate, -3)),
     notas_internas: template.notas,
+    paquete_id: idx === 0 ? 'paq_2' : idx === 1 ? 'paq_3' : 'paq_1',
+    rrss_authorized: true,
+    banco_imagenes_authorized: idx === 0,
+    fotos_extra_count: 0,
+    costo_extra: 0,
   })
 })
 
@@ -224,7 +235,7 @@ const createPhoto = (
     booking_id: bookingId,
     nombre_archivo: fileName,
     bucket_tipo: bucket,
-    is_customer_facing: bucket === 'output',
+    is_customer_facing: bucket === 'index',
     url_miniatura: urls.thumb,
     url_medium: urls.medium,
     url_original: urls.full,
@@ -234,6 +245,18 @@ const createPhoto = (
     fecha_subida: formatISO(subDays(new Date(), randomInt(1, 180))),
     ai_tags: [],
     ai_insights: null,
+    is_favorite: randomBool(0.1),
+    comentarios: randomBool(0.15)
+      ? [
+          {
+            id: `com_${Date.now()}_${index}`,
+            autor: 'Cliente Demo',
+            texto: 'Me encanta esta foto, ¿pueden retocar el fondo?',
+            fecha: formatISO(subDays(new Date(), randomInt(1, 30))),
+          },
+        ]
+      : [],
+    tags_manuales: randomBool(0.2) ? [faker.person.firstName()] : [],
   }
 
   if (!withAI) {
@@ -257,17 +280,17 @@ const otherBookings = bookings.filter((booking) => booking.status !== 'entregado
 const photos: Foto[] = []
 
 deliveredBookings.forEach((booking, deliveredIdx) => {
-  const outputCount = randomInt(MIN_OUTPUT_PHOTOS, MAX_OUTPUT_PHOTOS)
-  const captureCount = outputCount + randomInt(10, 45)
-  const selectsCount = Math.max(0, outputCount - randomInt(4, 12))
+  const indexCount = randomInt(MIN_INDEX_PHOTOS, MAX_INDEX_PHOTOS)
+  const captureCount = indexCount + randomInt(10, 45)
+  const selectsCount = Math.max(0, indexCount - randomInt(4, 12))
   const trashCount = randomInt(2, 8)
 
-  for (let i = 0; i < outputCount; i += 1) {
+  for (let i = 0; i < indexCount; i += 1) {
     photos.push(
       createPhoto(
         {
           bookingId: booking.id,
-          bucket: 'output',
+          bucket: 'index',
           index: i,
           deliveredIdx,
           createdAt: booking.fecha_sesion,
@@ -341,18 +364,18 @@ otherBookings.forEach((booking, idx) => {
   }
 })
 
-const totalOutputFotos = photos.filter((photo) => photo.bucket_tipo === 'output').length
+const totalIndexFotos = photos.filter((photo) => photo.bucket_tipo === 'index').length
 
-if (totalOutputFotos < 800) {
-  const deficit = 800 - totalOutputFotos
+if (totalIndexFotos < 800) {
+  const deficit = 800 - totalIndexFotos
   for (let i = 0; i < deficit; i += 1) {
     const booking = deliveredBookings[i % deliveredBookings.length]
     photos.push(
       createPhoto(
         {
           bookingId: booking.id,
-          bucket: 'output',
-          index: MAX_OUTPUT_PHOTOS + i,
+          bucket: 'index',
+          index: MAX_INDEX_PHOTOS + i,
           deliveredIdx: i,
           createdAt: booking.fecha_sesion,
         },
@@ -374,13 +397,13 @@ photos.forEach((foto) => {
 
 bookings.forEach((booking) => {
   const fotos = fotosPorBooking.get(booking.id) ?? []
-  const outputCount = fotos.filter((foto) => foto.bucket_tipo === 'output').length
+  const indexCount = fotos.filter((foto) => foto.bucket_tipo === 'index').length
   const selectsCount = fotos.filter((foto) => foto.bucket_tipo === 'selects').length
   const captureCount = fotos.filter((foto) => foto.bucket_tipo === 'capture').length
   const trashCount = fotos.filter((foto) => foto.bucket_tipo === 'trash').length
 
-  booking.total_fotos_customer_facing = outputCount
-  booking.total_fotos_procesadas = outputCount + selectsCount
+  booking.total_fotos_customer_facing = indexCount
+  booking.total_fotos_procesadas = indexCount + selectsCount
   booking.total_fotos_capturadas = captureCount + booking.total_fotos_procesadas + trashCount
 })
 
@@ -431,6 +454,39 @@ export const getDaysLeftForCliente = (cliente: Cliente) => {
   return dias > 0 ? dias : 0
 }
 
+export const mockPaquetes: PaqueteServicio[] = [
+  {
+    id: 'paq_1',
+    nombre: 'Paquete Básico',
+    descripcion: 'Ideal para sesiones individuales',
+    fotos_incluidas: 5,
+    precio_base: 2500,
+    precio_foto_extra: 150,
+    activo: true,
+    fecha_creacion: formatISO(subDays(new Date(), 180)),
+  },
+  {
+    id: 'paq_2',
+    nombre: 'Paquete Estándar',
+    descripcion: 'Perfecto para familias pequeñas',
+    fotos_incluidas: 10,
+    precio_base: 4500,
+    precio_foto_extra: 120,
+    activo: true,
+    fecha_creacion: formatISO(subDays(new Date(), 150)),
+  },
+  {
+    id: 'paq_3',
+    nombre: 'Paquete Premium',
+    descripcion: 'Para eventos y sesiones grandes',
+    fotos_incluidas: 25,
+    precio_base: 9500,
+    precio_foto_extra: 100,
+    activo: true,
+    fecha_creacion: formatISO(subDays(new Date(), 120)),
+  },
+]
+
 export const mockSummary = {
   totalClientes: mockClientes.length,
   clientesActivos: mockClientes.filter(
@@ -438,7 +494,7 @@ export const mockSummary = {
   ).length,
   suscripcionesPremium: mockClientes.filter((cliente) => cliente.status_subscription === 'premium_annual')
     .length,
-  totalFotos: mockFotos.filter((foto) => foto.bucket_tipo === 'output').length,
+  totalFotos: mockFotos.filter((foto) => foto.bucket_tipo === 'index').length,
   totalBookings: mockBookings.length,
 }
 

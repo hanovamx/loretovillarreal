@@ -1,0 +1,101 @@
+{
+  "common": {
+    "loading": "로딩 중...",
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "edit": "편집",
+    "close": "닫기",
+    "search": "검색",
+    "filter": "필터",
+    "select": "선택",
+    "add": "추가",
+    "remove": "제거"
+  },
+  "auth": {
+    "login": "로그인",
+    "logout": "로그아웃",
+    "email": "이메일",
+    "password": "비밀번호",
+    "loginButton": "입장",
+    "welcome": "환영합니다"
+  },
+  "dashboard": {
+    "title": "당신의 추억이 준비되었습니다",
+    "mySessions": "내 세션",
+    "myProfile": "내 프로필",
+    "settings": "설정",
+    "description": "지능형 AI 필터로 세션을 탐색하고, 즐겨찾기를 다운로드하고, 원하는 사람과 특별한 순간을 공유하세요."
+  },
+  "session": {
+    "title": "세션",
+    "photosAvailable": "사진 사용 가능",
+    "package": "패키지",
+    "photosIncluded": "포함된 사진",
+    "selectPhotos": "사진 선택",
+    "cancelSelection": "선택 취소",
+    "photosSelected": "선택된 사진",
+    "addToFavorites": "즐겨찾기에 추가",
+    "addToCart": "장바구니에 추가",
+    "downloadSelected": "선택한 항목 다운로드",
+    "downloadAll": "모두 다운로드",
+    "searchByName": "이름으로 검색",
+    "aiFilters": "AI 필터",
+    "quickActions": "빠른 작업",
+    "results": "결과",
+    "activeFilters": "AI 필터 활성화",
+    "noResults": "검색과 일치하는 사진이 없습니다"
+  },
+  "cart": {
+    "title": "선택 장바구니",
+    "photosSelected": "선택된 사진",
+    "includedInPackage": "패키지에 포함됨",
+    "extras": "추가",
+    "total": "총",
+    "photos": "사진",
+    "additionalCost": "추가 비용",
+    "emptyCart": "장바구니 비우기",
+    "finalizeSelection": "선택 완료",
+    "empty": "장바구니가 비어 있습니다",
+    "addPhotos": "사진을 선택하여 장바구니에 추가하세요",
+    "viewCart": "장바구니 보기",
+    "inCart": "장바구니에 있음",
+    "addToCart": "장바구니에 추가",
+    "removeFromCart": "장바구니에서 제거",
+    "addedToCart": "사진이 장바구니에 추가되었습니다",
+    "removedFromCart": "사진이 장바구니에서 제거되었습니다",
+    "cartEmptied": "장바구니가 비워졌습니다",
+    "selectionFinalized": "선택이 완료되었습니다. 처리 중..."
+  },
+  "favorites": {
+    "addToFavorites": "즐겨찾기에 추가",
+    "removeFromFavorites": "즐겨찾기에서 제거",
+    "addedToFavorites": "즐겨찾기에 추가됨",
+    "removedFromFavorites": "즐겨찾기에서 제거됨",
+    "addedMultiple": "사진이 즐겨찾기에 추가됨"
+  },
+  "comments": {
+    "title": "댓글",
+    "addComment": "댓글 추가",
+    "placeholder": "댓글을 작성하세요...",
+    "add": "추가",
+    "added": "댓글이 추가되었습니다",
+    "noComments": "아직 댓글이 없습니다"
+  },
+  "photo": {
+    "tags": "태그",
+    "aiInsights": "AI 인사이트",
+    "manualTags": "수동 태그",
+    "addTag": "태그 추가",
+    "tagAdded": "태그가 추가되었습니다"
+  },
+  "profile": {
+    "title": "내 프로필",
+    "personalInfo": "개인 정보",
+    "subscription": "구독",
+    "active": "활성",
+    "temporary": "임시 액세스",
+    "expired": "구독 만료"
+  }
+}
+

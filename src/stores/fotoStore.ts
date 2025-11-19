@@ -14,11 +14,15 @@ interface FotoStoreState {
   clearQueue: () => void
   getFotosByBooking: (bookingId: string, bucket?: BucketType) => Foto[]
   getFotosByBucket: (bucket: BucketType) => Foto[]
-  getOutputFotos: () => Foto[]
+  getIndexFotos: () => Foto[]
   getBucketMetrics: (bookingId: string) => Record<BucketType, number>
   uploadFotos: (files: File[], bookingId: string, bucket: BucketType) => Promise<number>
   moveFoto: (fotoId: string, targetBucket: BucketType) => Promise<void>
   deleteFoto: (fotoId: string) => void
+  toggleFavorite: (fotoId: string) => void
+  agregarComentario: (fotoId: string, autor: string, texto: string) => void
+  agregarTagManual: (fotoId: string, tag: string) => void
+  quitarTagManual: (fotoId: string, tag: string) => void
 }
 
 const generateSeededUrls = (seed: string) => ({
@@ -41,7 +45,7 @@ const createFotoFromFile = async (params: {
     booking_id: bookingId,
     nombre_archivo: fileName,
     bucket_tipo: bucket,
-    is_customer_facing: bucket === 'output',
+    is_customer_facing: bucket === 'index',
     url_miniatura: urls.thumb,
     url_medium: urls.medium,
     url_original: urls.full,
@@ -51,9 +55,12 @@ const createFotoFromFile = async (params: {
     fecha_subida: formatISO(new Date()),
     ai_tags: [],
     ai_insights: null,
+    is_favorite: false,
+    comentarios: [],
+    tags_manuales: [],
   }
 
-  if (bucket !== 'output') {
+  if (bucket !== 'index') {
     return baseFoto
   }
 
@@ -89,11 +96,11 @@ export const useFotoStore = create<FotoStoreState>((set, get) => ({
       (foto) => foto.booking_id === bookingId && (!bucket || foto.bucket_tipo === bucket),
     ),
   getFotosByBucket: (bucket) => get().fotos.filter((foto) => foto.bucket_tipo === bucket),
-  getOutputFotos: () => get().fotos.filter((foto) => foto.bucket_tipo === 'output'),
+  getIndexFotos: () => get().fotos.filter((foto) => foto.bucket_tipo === 'index'),
   getBucketMetrics: (bookingId) => {
     const metrics: Record<BucketType, number> = {
       capture: 0,
-      output: 0,
+      index: 0,
       selects: 0,
       trash: 0,
     }
@@ -170,11 +177,11 @@ export const useFotoStore = create<FotoStoreState>((set, get) => ({
                   const booking = bookingStore.getBookingById(bookingId)
                   if (booking) {
                     const bookingFotos = get().fotos.filter((f) => f.booking_id === bookingId)
-                    const outputCount = bookingFotos.filter((f) => f.bucket_tipo === 'output').length
+                    const indexCount = bookingFotos.filter((f) => f.bucket_tipo === 'index').length
                     const processedCount = bookingFotos.filter((f) => f.bucket_tipo !== 'trash').length
                     bookingStore.updateBookingCounts(bookingId, {
                       total_fotos_customer_facing:
-                        bucket === 'output' ? outputCount : booking.total_fotos_customer_facing,
+                        bucket === 'index' ? indexCount : booking.total_fotos_customer_facing,
                       total_fotos_procesadas: processedCount,
                     })
                   }
@@ -211,12 +218,12 @@ export const useFotoStore = create<FotoStoreState>((set, get) => ({
     let updatedFoto: Foto = {
       ...currentFoto,
       bucket_tipo: targetBucket,
-      is_customer_facing: targetBucket === 'output',
-      ai_tags: targetBucket === 'output' ? currentFoto.ai_tags : [],
-      ai_insights: targetBucket === 'output' ? currentFoto.ai_insights : null,
+      is_customer_facing: targetBucket === 'index',
+      ai_tags: targetBucket === 'index' ? currentFoto.ai_tags : [],
+      ai_insights: targetBucket === 'index' ? currentFoto.ai_insights : null,
     }
 
-    if (targetBucket === 'output' && !currentFoto.ai_insights) {
+    if (targetBucket === 'index' && !currentFoto.ai_insights) {
       const { tags, insights } = await generateAITags(`${fotoId}_${Date.now()}`)
       updatedFoto = {
         ...updatedFoto,
@@ -225,7 +232,7 @@ export const useFotoStore = create<FotoStoreState>((set, get) => ({
       }
     }
 
-    if (targetBucket !== 'output') {
+    if (targetBucket !== 'index') {
       updatedFoto = {
         ...updatedFoto,
         ai_tags: [],
@@ -240,6 +247,46 @@ export const useFotoStore = create<FotoStoreState>((set, get) => ({
   deleteFoto: (fotoId) => {
     set((state) => ({
       fotos: state.fotos.filter((foto) => foto.id !== fotoId),
+    }))
+  },
+  toggleFavorite: (fotoId) => {
+    set((state) => ({
+      fotos: state.fotos.map((foto) =>
+        foto.id === fotoId ? { ...foto, is_favorite: !foto.is_favorite } : foto,
+      ),
+    }))
+  },
+  agregarComentario: (fotoId, autor, texto) => {
+    const nuevoComentario = {
+      id: `com_${Date.now()}`,
+      autor,
+      texto,
+      fecha: formatISO(new Date()),
+    }
+    set((state) => ({
+      fotos: state.fotos.map((foto) =>
+        foto.id === fotoId
+          ? { ...foto, comentarios: [...foto.comentarios, nuevoComentario] }
+          : foto,
+      ),
+    }))
+  },
+  agregarTagManual: (fotoId, tag) => {
+    set((state) => ({
+      fotos: state.fotos.map((foto) =>
+        foto.id === fotoId && !foto.tags_manuales.includes(tag)
+          ? { ...foto, tags_manuales: [...foto.tags_manuales, tag] }
+          : foto,
+      ),
+    }))
+  },
+  quitarTagManual: (fotoId, tag) => {
+    set((state) => ({
+      fotos: state.fotos.map((foto) =>
+        foto.id === fotoId
+          ? { ...foto, tags_manuales: foto.tags_manuales.filter((t) => t !== tag) }
+          : foto,
+      ),
     }))
   },
 }))

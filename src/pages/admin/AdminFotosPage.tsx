@@ -19,8 +19,8 @@ const bucketDetails: Record<
     title: 'Capture',
     description: 'Originales RAW de cámara',
   },
-  output: {
-    title: 'Output',
+  index: {
+    title: 'Index',
     description: 'Fotos finales para cliente',
     helper: 'AI tagging activado automáticamente',
     badge: 'AI',
@@ -35,7 +35,7 @@ const bucketDetails: Record<
   },
 }
 
-const bucketOrder: BucketType[] = ['capture', 'output', 'selects', 'trash']
+const bucketOrder: BucketType[] = ['capture', 'index', 'selects', 'trash']
 
 export const AdminFotosPage = () => {
   const navigate = useNavigate()
@@ -53,21 +53,21 @@ export const AdminFotosPage = () => {
 
   const fileInputsRef = useRef<Record<BucketType, HTMLInputElement | null>>({
     capture: null,
-    output: null,
+    index: null,
     selects: null,
     trash: null,
   })
 
-  const outputFotos = fotos.filter((foto) => foto.bucket_tipo === 'output')
+  const indexFotos = fotos.filter((foto) => foto.bucket_tipo === 'index')
 
   const tagsAvailable = useMemo(() => {
     const tags = new Set<string>()
-    outputFotos.forEach((foto) => foto.ai_tags?.forEach((tag) => tags.add(tag)))
+    indexFotos.forEach((foto) => foto.ai_tags?.forEach((tag) => tags.add(tag)))
     return Array.from(tags).sort()
-  }, [outputFotos])
+  }, [indexFotos])
 
   const filteredFotos = useMemo(() => {
-    return outputFotos.filter((foto) => {
+    return indexFotos.filter((foto) => {
       const bookingMatch = selectedBooking === 'todos' || foto.booking_id === selectedBooking
       const bookingEntity = bookings.find((booking) => booking.id === foto.booking_id)
       const clienteMatch =
@@ -75,12 +75,15 @@ export const AdminFotosPage = () => {
         (bookingEntity && bookingEntity.cliente_id === selectedCliente)
       const searchMatch =
         search.trim().length === 0 ||
-        foto.nombre_archivo.toLowerCase().includes(search.toLowerCase())
+        foto.nombre_archivo.toLowerCase().includes(search.toLowerCase()) ||
+        foto.ai_tags?.some((tag) => tag.toLowerCase().includes(search.toLowerCase())) ||
+        foto.tags_manuales?.some((tag) => tag.toLowerCase().includes(search.toLowerCase())) ||
+        (bookingEntity && bookingEntity.nombre_sesion.toLowerCase().includes(search.toLowerCase()))
       const tagsMatch =
         selectedTags.length === 0 || selectedTags.every((tag) => foto.ai_tags?.includes(tag))
       return bookingMatch && clienteMatch && searchMatch && tagsMatch
     })
-  }, [outputFotos, selectedBooking, selectedCliente, bookings, search, selectedTags])
+  }, [indexFotos, selectedBooking, selectedCliente, bookings, search, selectedTags])
 
   const selectedBookingEntity = useMemo(
     () =>
@@ -135,23 +138,23 @@ export const AdminFotosPage = () => {
   }
 
   const metrics = useMemo(() => {
-    const totalBookings = new Set(outputFotos.map((foto) => foto.booking_id)).size
+    const totalBookings = new Set(indexFotos.map((foto) => foto.booking_id)).size
     const totalClientes = new Set(
-      outputFotos
+      indexFotos
         .map((foto) => bookings.find((booking) => booking.id === foto.booking_id)?.cliente_id)
         .filter(Boolean),
     ).size
-    const personasDetectadas = outputFotos.reduce(
+    const personasDetectadas = indexFotos.reduce(
       (acc, foto) => acc + (foto.ai_insights?.faces_count ?? 0),
       0,
     )
     return {
-      totalFotos: outputFotos.length,
+      totalFotos: indexFotos.length,
       totalBookings,
       totalClientes,
       personasDetectadas,
     }
-  }, [outputFotos, bookings])
+  }, [indexFotos, bookings])
 
   const handleToggleTag = (tag: string) => {
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((item) => item !== tag) : [...prev, tag]))
@@ -161,8 +164,8 @@ export const AdminFotosPage = () => {
     <div className="space-y-12">
       <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.12em] text-black/40">Biblioteca global OUTPUT</p>
-          <h1 className="mt-4 text-4xl font-normal uppercase tracking-[0.16em] text-black">Fotos</h1>
+          <p className="text-xs uppercase tracking-[0.06em] text-black/40">Biblioteca global INDEX</p>
+          <h1 className="mt-4 text-4xl font-normal uppercase tracking-[0.08em] text-black">Fotos</h1>
         </div>
         <Button
           tone="secondary"
@@ -178,28 +181,28 @@ export const AdminFotosPage = () => {
         <div className="space-y-8">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-xs uppercase tracking-[0.12em] text-black/40">Gestión de buckets</p>
-              <h2 className="mt-2 text-2xl font-normal uppercase tracking-[0.12em] text-black">
+              <p className="text-xs uppercase tracking-[0.06em] text-black/40">Gestión de buckets</p>
+              <h2 className="mt-2 text-2xl font-normal uppercase tracking-[0.06em] text-black">
                 {selectedBookingEntity ? selectedBookingEntity.nombre_sesion : 'Selecciona un booking'}
               </h2>
               {selectedBookingEntity ? (
-                <p className="mt-2 text-[11px] uppercase tracking-[0.12em] text-black/40">
+                <p className="mt-2 text-[11px] uppercase tracking-[0.06em] text-black/40">
                   {bookingDateLabel} • {selectedClienteEntity?.nombre_completo ?? 'Cliente por confirmar'}
                 </p>
               ) : (
-                <p className="mt-2 text-[11px] uppercase tracking-[0.12em] text-black/40">
+                <p className="mt-2 text-[11px] uppercase tracking-[0.06em] text-black/40">
                   Elige un booking para habilitar la subida a cada bucket.
                 </p>
               )}
             </div>
             <div className="w-full max-w-md">
-              <label className="text-[11px] uppercase tracking-[0.12em] text-black/40">
+              <label className="text-[11px] uppercase tracking-[0.06em] text-black/40">
                 Seleccionar booking
               </label>
               <select
                 value={selectedBooking}
                 onChange={(event) => setSelectedBooking(event.target.value as typeof selectedBooking)}
-                className="mt-2 w-full border border-black/10 bg-white px-4 py-3 text-[11px] uppercase tracking-[0.12em] text-black outline-none transition hover:border-black focus:border-black"
+                className="mt-2 w-full border border-black/10 bg-white px-4 py-3 text-[11px] uppercase tracking-[0.06em] text-black outline-none transition hover:border-black focus:border-black"
               >
                 <option value="todos">Selecciona un booking…</option>
                 {bookingsSorted.map((booking) => (
@@ -217,7 +220,7 @@ export const AdminFotosPage = () => {
               const bucketCount = bookingBucketMetrics ? bookingBucketMetrics[bucket] : '—'
               return (
                 <div key={bucket} className="flex h-full flex-col border border-black/10 bg-white p-6">
-                  <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.12em] text-black/40">
+                  <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.06em] text-black/40">
                     <span>{info.title}</span>
                     {info.badge ? (
                       <Badge tone="primary" uppercase={false} className="!px-2 !py-0.5">
@@ -228,11 +231,11 @@ export const AdminFotosPage = () => {
                   <p className="mt-4 text-3xl font-normal tracking-[0.08em] text-black">
                     {selectedBookingEntity ? bucketCount : '—'}
                   </p>
-                  <p className="mt-3 text-[11px] uppercase tracking-[0.12em] text-black/50">
+                  <p className="mt-3 text-[11px] uppercase tracking-[0.06em] text-black/50">
                     {info.description}
                   </p>
                   {info.helper ? (
-                    <p className="mt-2 text-[10px] uppercase tracking-[0.12em] text-black/40">
+                    <p className="mt-2 text-[10px] uppercase tracking-[0.06em] text-black/40">
                       {info.helper}
                     </p>
                   ) : null}
@@ -258,7 +261,7 @@ export const AdminFotosPage = () => {
                         Subir o arrastrar
                       </Button>
                     ) : (
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/30">
+                      <p className="text-[11px] uppercase tracking-[0.06em] text-black/30">
                         Selecciona un booking primero
                       </p>
                     )}
@@ -269,17 +272,17 @@ export const AdminFotosPage = () => {
           </div>
 
           <div className="border border-black/10 bg-white p-6">
-            <p className="text-xs uppercase tracking-[0.12em] text-black/40">Cola de subida</p>
+            <p className="text-xs uppercase tracking-[0.06em] text-black/40">Cola de subida</p>
             <div className="mt-5 space-y-4">
               {uploadQueue.length === 0 ? (
-                <div className="border border-dashed border-black/20 bg-black/5 px-5 py-6 text-center text-[11px] uppercase tracking-[0.12em] text-black/40">
+                <div className="border border-dashed border-black/20 bg-black/5 px-5 py-6 text-center text-[11px] uppercase tracking-[0.06em] text-black/40">
                   Selecciona archivos para comenzar la subida al bucket elegido.
                 </div>
               ) : null}
               {uploadQueue.map((item) => (
                 <div
                   key={item.id}
-                  className="space-y-3 border border-black/10 bg-white px-4 py-4 text-[11px] uppercase tracking-[0.12em] text-black/60 shadow-sm"
+                  className="space-y-3 border border-black/10 bg-white px-4 py-4 text-[11px] uppercase tracking-[0.06em] text-black/60 shadow-sm"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <span className="truncate">{item.fileName}</span>
@@ -291,7 +294,7 @@ export const AdminFotosPage = () => {
                       style={{ width: `${item.progress}%` }}
                     />
                   </div>
-                  <p className="text-[10px] uppercase tracking-[0.12em] text-black/40">
+                  <p className="text-[10px] uppercase tracking-[0.06em] text-black/40">
                     {item.status === 'uploading'
                       ? 'Subiendo…'
                       : item.status === 'processing'
@@ -311,7 +314,7 @@ export const AdminFotosPage = () => {
         <MetricCard
           title="Total fotos disponibles"
           value={metrics.totalFotos}
-          subValue="Bucket OUTPUT con AI"
+          subValue="Bucket INDEX con AI"
           icon={<LuImage />}
           accent="primary"
         />
@@ -341,9 +344,9 @@ export const AdminFotosPage = () => {
       <Card>
         <div className="grid gap-6 lg:grid-cols-[260px,1fr]">
           <div className="space-y-6 border border-black/10 bg-white p-6">
-            <p className="text-xs uppercase tracking-[0.12em] text-black/40">Filtros</p>
+            <p className="text-xs uppercase tracking-[0.06em] text-black/40">Filtros</p>
             <div className="space-y-3">
-              <label className="block text-[11px] uppercase tracking-[0.12em] text-black/40">
+              <label className="block text-[11px] uppercase tracking-[0.06em] text-black/40">
                 Cliente
               </label>
               <select
@@ -352,7 +355,7 @@ export const AdminFotosPage = () => {
                   setSelectedCliente(event.target.value as typeof selectedCliente)
                   setSelectedBooking('todos')
                 }}
-                className="w-full border border-black/10 bg-white px-4 py-3 text-[11px] uppercase tracking-[0.12em] text-black outline-none transition hover:border-black focus:border-black"
+                className="w-full border border-black/10 bg-white px-4 py-3 text-[11px] uppercase tracking-[0.06em] text-black outline-none transition hover:border-black focus:border-black"
               >
                 <option value="todos">Todos los clientes</option>
                 {clientes.map((cliente) => (
@@ -363,13 +366,13 @@ export const AdminFotosPage = () => {
               </select>
             </div>
             <div className="space-y-3">
-              <label className="block text-[11px] uppercase tracking-[0.12em] text-black/40">
+              <label className="block text-[11px] uppercase tracking-[0.06em] text-black/40">
                 Booking
               </label>
               <select
                 value={selectedBooking}
                 onChange={(event) => setSelectedBooking(event.target.value as typeof selectedBooking)}
-                className="w-full border border-black/10 bg-white px-4 py-3 text-[11px] uppercase tracking-[0.12em] text-black outline-none transition hover:border-black focus:border-black"
+                className="w-full border border-black/10 bg-white px-4 py-3 text-[11px] uppercase tracking-[0.06em] text-black outline-none transition hover:border-black focus:border-black"
               >
                 <option value="todos">Todos los bookings</option>
                 {bookings
@@ -382,7 +385,7 @@ export const AdminFotosPage = () => {
               </select>
             </div>
             <div className="space-y-3">
-              <label className="block text-[11px] uppercase tracking-[0.12em] text-black/40">
+              <label className="block text-[11px] uppercase tracking-[0.06em] text-black/40">
                 Buscar
               </label>
               <div className="relative">
@@ -390,19 +393,19 @@ export const AdminFotosPage = () => {
                 <input
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
-                  className="w-full border border-black/10 bg-white py-3 pl-9 pr-3 text-[11px] uppercase tracking-[0.12em] text-black outline-none transition hover:border-black focus:border-black"
-                  placeholder="Nombre de archivo"
+                  className="w-full border border-black/10 bg-white py-3 pl-9 pr-3 text-[11px] uppercase tracking-[0.06em] text-black outline-none transition hover:border-black focus:border-black"
+                  placeholder="Archivo, tags o sesión"
                 />
               </div>
             </div>
             <div>
-              <p className="text-[11px] uppercase tracking-[0.12em] text-black/40">AI Tags</p>
+              <p className="text-[11px] uppercase tracking-[0.06em] text-black/40">AI Tags</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {tagsAvailable.map((tag) => (
                   <button
                     key={tag}
                     onClick={() => handleToggleTag(tag)}
-                    className={`border px-3 py-2 text-[11px] uppercase tracking-[0.12em] transition ${
+                    className={`border px-3 py-2 text-[11px] uppercase tracking-[0.06em] transition ${
                       selectedTags.includes(tag)
                         ? 'border-black bg-black text-white'
                         : 'border-black/10 bg-white text-black hover:border-black'
@@ -415,7 +418,7 @@ export const AdminFotosPage = () => {
             </div>
           </div>
           <div className="space-y-6">
-            <div className="text-xs uppercase tracking-[0.12em] text-black/40">
+            <div className="text-xs uppercase tracking-[0.06em] text-black/40">
               {filteredFotos.length} fotos con los filtros seleccionados
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -432,10 +435,10 @@ export const AdminFotosPage = () => {
                       className="h-full w-full object-cover transition duration-700 hover:scale-110"
                     />
                     <div className="absolute left-3 top-3">
-                      <Badge tone="success">Output</Badge>
+                      <Badge tone="success">Index</Badge>
                     </div>
                   </div>
-                  <div className="space-y-3 px-4 py-3 text-[11px] uppercase tracking-[0.12em] text-black/60">
+                  <div className="space-y-3 px-4 py-3 text-[11px] uppercase tracking-[0.06em] text-black/60">
                     <p className="text-black">{foto.nombre_archivo}</p>
                     <p>
                       {new Date(foto.fecha_subida).toLocaleDateString()} •{' '}
@@ -453,7 +456,7 @@ export const AdminFotosPage = () => {
               ))}
             </div>
             {filteredFotos.length === 0 ? (
-              <div className="border border-black/10 bg-black/5 p-10 text-center text-xs uppercase tracking-[0.12em] text-black/40">
+              <div className="border border-black/10 bg-black/5 p-10 text-center text-xs uppercase tracking-[0.06em] text-black/40">
                 No hay fotos que coincidan con los filtros activos.
               </div>
             ) : null}

@@ -6,6 +6,7 @@ import {
   LuImage,
   LuLayoutDashboard,
   LuLogOut,
+  LuPackage,
   LuSettings,
   LuUsers,
 } from 'react-icons/lu'
@@ -32,6 +33,11 @@ const adminMenu = [
     path: '/admin/fotos',
     icon: LuImage,
   },
+  {
+    label: 'Paquetes',
+    path: '/admin/paquetes',
+    icon: LuPackage,
+  },
 ]
 
 const secondaryMenu = [
@@ -54,8 +60,8 @@ const Sidebar = ({ collapsed, onClose }: { collapsed: boolean; onClose: () => vo
     >
       <div className="flex items-center justify-between border-b border-black/10 px-6 py-6">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.12em] text-black/50">Loreto Villarreal</p>
-          <h1 className="text-lg font-normal tracking-[0.12em]">Studio</h1>
+          <p className="text-[11px] uppercase tracking-[0.06em] text-black/50">Loreto Villarreal</p>
+          <h1 className="text-lg font-normal tracking-[0.06em]">Studio</h1>
         </div>
         <button
           className="p-2 text-black/50 hover:bg-black/10 lg:hidden"
@@ -73,7 +79,7 @@ const Sidebar = ({ collapsed, onClose }: { collapsed: boolean; onClose: () => vo
                 <NavLink
                   to={item.path}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 text-sm font-medium uppercase tracking-[0.14em] transition ${
+                    `flex items-center gap-3 px-4 py-3 text-sm font-medium uppercase tracking-[0.07em] transition ${
                       isActive
                         ? 'bg-black text-white'
                         : 'text-black/60 hover:bg-black/5'
@@ -98,7 +104,7 @@ const Sidebar = ({ collapsed, onClose }: { collapsed: boolean; onClose: () => vo
                 <NavLink
                   to={item.path}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 text-sm font-medium uppercase tracking-[0.14em] transition ${
+                    `flex items-center gap-3 px-4 py-3 text-sm font-medium uppercase tracking-[0.07em] transition ${
                       isActive
                         ? 'bg-black text-white'
                         : 'text-black/60 hover:bg-black/5'
@@ -114,7 +120,7 @@ const Sidebar = ({ collapsed, onClose }: { collapsed: boolean; onClose: () => vo
           </ul>
         </div>
       </nav>
-      <div className="border-t border-black/10 px-6 py-6 text-[11px] uppercase tracking-[0.14em] text-black/40">
+      <div className="border-t border-black/10 px-6 py-6 text-[11px] uppercase tracking-[0.07em] text-black/40">
         © {new Date().getFullYear()} Loreto Villarreal
       </div>
     </aside>
@@ -132,25 +138,25 @@ export const AdminLayout = () => {
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-black/10 bg-white/95 px-4 backdrop-blur md:px-8">
           <div className="flex items-center gap-3">
             <button
-              className="border border-black px-3 py-2 text-[11px] font-medium uppercase tracking-[0.12em] text-black transition hover:bg-black hover:text-white lg:hidden"
+              className="border border-black px-3 py-2 text-[11px] font-medium uppercase tracking-[0.06em] text-black transition hover:bg-black hover:text-white lg:hidden"
               onClick={() => setSidebarOpen((prev) => !prev)}
             >
               Menú
             </button>
-            <span className="hidden text-[11px] font-medium uppercase tracking-[0.14em] text-black/40 md:inline">
+            <span className="hidden text-[11px] font-medium uppercase tracking-[0.07em] text-black/40 md:inline">
               Omnicanal • Dashboard Admin
             </span>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-black/50">
+              <p className="text-[11px] font-medium uppercase tracking-[0.07em] text-black/50">
                 {user?.name ?? 'Administrador'}
               </p>
-              <p className="text-[10px] uppercase tracking-[0.14em] text-black/40">Studio Manager</p>
+              <p className="text-[10px] uppercase tracking-[0.07em] text-black/40">Studio Manager</p>
             </div>
             <button
               onClick={logout}
-              className="flex items-center gap-2 border border-black px-3 py-2 text-[11px] font-medium uppercase tracking-[0.12em] text-black transition hover:bg-black hover:text-white"
+              className="flex items-center gap-2 border border-black px-3 py-2 text-[11px] font-medium uppercase tracking-[0.06em] text-black transition hover:bg-black hover:text-white"
             >
               <LuLogOut /> Salir
             </button>

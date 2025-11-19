@@ -1,6 +1,7 @@
 import type { FormEvent } from 'react'
 import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import Button from '../../components/common/Button'
 import Card from '../../components/common/Card'
@@ -8,6 +9,7 @@ import { useAuthStore } from '../../stores/authStore'
 import { BRANDING_HERO_IMAGES, getBrandingImage } from '../../constants/branding'
 
 export const ClientLoginPage = () => {
+  const { t } = useTranslation()
   const { loginClient, isAuthenticated, userType } = useAuthStore()
   const [email, setEmail] = useState('cliente.demo@loretovillarreal.studio')
   const [password, setPassword] = useState('demo123')
@@ -22,7 +24,7 @@ export const ClientLoginPage = () => {
     setLoading(true)
     try {
       await loginClient(email, password)
-      toast.success('¡Bienvenido! Tus fotos están listas.')
+      toast.success(t('auth.welcome'))
     } catch (error) {
       const message = error instanceof Error ? error.message : 'No fue posible iniciar sesión'
       toast.error(message)
@@ -42,9 +44,9 @@ export const ClientLoginPage = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/65 to-black/35" />
           <div className="absolute bottom-12 left-12 text-white">
-            <p className="text-xs uppercase tracking-[0.22em] text-white/70">Loreto Villarreal</p>
-            <h1 className="mt-4 text-4xl font-semibold tracking-[0.5em]">STUDIO CLOUD</h1>
-            <p className="mt-6 max-w-sm text-xs uppercase tracking-[0.14em] text-white/80">
+            <p className="text-xs uppercase tracking-[0.10em] text-white/70">Loreto Villarreal</p>
+            <h1 className="mt-4 text-4xl font-semibold tracking-[0.20em]">STUDIO CLOUD</h1>
+            <p className="mt-6 max-w-sm text-xs uppercase tracking-[0.07em] text-white/80">
               Tu galería personal con AI insights. Visualiza, filtra y descarga tus fotografías en
               cualquier momento.
             </p>
@@ -55,52 +57,52 @@ export const ClientLoginPage = () => {
             <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-10">
               <div className="flex-1 space-y-6">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.22em] text-slate-400">
-                    Accede a tus fotografías
+                  <p className="text-xs uppercase tracking-[0.10em] text-slate-400">
+                    {t('auth.login')}
                   </p>
-                  <h2 className="mt-3 text-2xl font-semibold uppercase tracking-[0.22em] text-slate-900">
-                    Experiencia omnicanal
+                  <h2 className="mt-3 text-2xl font-semibold uppercase tracking-[0.10em] text-slate-900">
+                    {t('dashboard.title')}
                   </h2>
                 </div>
 
                 <Card className="border border-slate-200">
                   <form className="space-y-5" onSubmit={handleSubmit}>
                     <div>
-                      <p className="text-xs uppercase tracking-[0.14em] text-slate-400">
+                      <p className="text-xs uppercase tracking-[0.07em] text-slate-400">
                         Acceso temporal (180 días)
                       </p>
-                      <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-slate-500">
+                      <p className="mt-2 text-[11px] uppercase tracking-[0.08em] text-slate-500">
                         Visualiza y descarga todas tus fotos entregadas.
                       </p>
                     </div>
                     <div>
-                      <label className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-                        Correo electrónico
+                      <label className="text-[10px] font-semibold uppercase tracking-[0.07em] text-slate-400">
+                        {t('auth.email')}
                       </label>
                       <input
                         type="email"
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
                         required
-                        className="mt-2 w-full rounded-full border border-slate-200 bg-white px-6 py-3 text-xs uppercase tracking-[0.16em] text-slate-600 outline-none transition focus:border-slate-900"
+                        className="mt-2 w-full rounded-full border border-slate-200 bg-white px-6 py-3 text-xs uppercase tracking-[0.08em] text-slate-600 outline-none transition focus:border-slate-900"
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-                        Contraseña temporal
+                      <label className="text-[10px] font-semibold uppercase tracking-[0.07em] text-slate-400">
+                        {t('auth.password')}
                       </label>
                       <input
                         type="password"
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
                         required
-                        className="mt-2 w-full rounded-full border border-slate-200 bg-white px-6 py-3 text-xs uppercase tracking-[0.16em] text-slate-600 outline-none transition focus:border-slate-900"
+                        className="mt-2 w-full rounded-full border border-slate-200 bg-white px-6 py-3 text-xs uppercase tracking-[0.08em] text-slate-600 outline-none transition focus:border-slate-900"
                       />
                     </div>
                     <Button type="submit" tone="secondary" className="w-full" disabled={loading}>
-                      {loading ? 'Ingresando…' : 'Acceder a mis fotos'}
+                      {loading ? t('common.loading') : t('auth.loginButton')}
                     </Button>
-                    <p className="text-[10px] uppercase tracking-[0.14em] text-emerald-500">
+                    <p className="text-[10px] uppercase tracking-[0.07em] text-emerald-500">
                       ✓ Acceso vigente durante 180 días
                     </p>
                   </form>
@@ -109,10 +111,10 @@ export const ClientLoginPage = () => {
 
               <div className="flex-1">
                 <Card className="h-full border border-amber-300 bg-gradient-to-br from-amber-50 via-white to-amber-100 p-6">
-                  <span className="inline-flex items-center rounded-full bg-amber-500 px-3 py-1 text-[10px] uppercase tracking-[0.14em] text-white">
+                  <span className="inline-flex items-center rounded-full bg-amber-500 px-3 py-1 text-[10px] uppercase tracking-[0.07em] text-white">
                     Premium
                   </span>
-                  <h3 className="mt-4 text-2xl font-heading uppercase tracking-[0.22em] text-amber-600">
+                  <h3 className="mt-4 text-2xl font-heading uppercase tracking-[0.10em] text-amber-600">
                     Plan Premium Anual
                   </h3>
                   <p className="mt-4 text-sm text-amber-700">
@@ -128,7 +130,7 @@ export const ClientLoginPage = () => {
                   </ul>
                   <div className="mt-8">
                     <p className="text-2xl font-heading font-semibold text-amber-600">$5,000 MXN / año</p>
-                    <p className="text-xs uppercase tracking-[0.12em] text-amber-500">
+                    <p className="text-xs uppercase tracking-[0.06em] text-amber-500">
                       o $480 MXN al mes con pago anual
                     </p>
                   </div>
@@ -138,7 +140,7 @@ export const ClientLoginPage = () => {
                   >
                     Obtener Plan Premium
                   </Button>
-                  <p className="mt-4 text-[11px] uppercase tracking-[0.12em] text-amber-600">
+                  <p className="mt-4 text-[11px] uppercase tracking-[0.06em] text-amber-600">
                     Ideal para familias y clientes que desean un archivo fotográfico eterno.
                   </p>
                 </Card>

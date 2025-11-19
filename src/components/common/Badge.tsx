@@ -33,7 +33,7 @@ export const Badge = ({ tone = 'default', children, uppercase = true, className 
   return (
     <span
       className={clsx(
-        'inline-flex items-center rounded-none px-3 py-1 text-[11px] font-medium tracking-[0.12em]',
+        'inline-flex items-center rounded-none px-3 py-1 text-[11px] font-medium tracking-[0.06em]',
         toneClasses[tone],
         uppercase ? 'uppercase' : '',
         className,

@@ -42,7 +42,7 @@ export const Button = ({
   return (
     <button
       className={clsx(
-        'inline-flex items-center justify-center gap-2 rounded-none font-medium tracking-[0.12em] transition focus-visible:outline-offset-4',
+        'inline-flex items-center justify-center gap-2 rounded-none font-medium tracking-[0.06em] transition focus-visible:outline-offset-4',
         toneClasses[tone],
         sizeClasses[size],
         uppercase ? 'uppercase' : '',

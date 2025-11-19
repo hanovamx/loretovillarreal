@@ -1,0 +1,101 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filters",
+    "select": "Select",
+    "add": "Add",
+    "remove": "Remove"
+  },
+  "auth": {
+    "login": "Sign in",
+    "logout": "Log out",
+    "email": "Email",
+    "password": "Password",
+    "loginButton": "Enter",
+    "welcome": "Welcome"
+  },
+  "dashboard": {
+    "title": "Your memories are ready",
+    "mySessions": "My Sessions",
+    "myProfile": "My Profile",
+    "settings": "Settings",
+    "description": "Explore your sessions with intelligent AI filters, download your favorites and share special moments with whoever you want."
+  },
+  "session": {
+    "title": "Session",
+    "photosAvailable": "photographs available",
+    "package": "Package",
+    "photosIncluded": "photos included",
+    "selectPhotos": "Select photos",
+    "cancelSelection": "Cancel selection",
+    "photosSelected": "photos selected",
+    "addToFavorites": "Add to favorites",
+    "addToCart": "Add to cart",
+    "downloadSelected": "Download selected",
+    "downloadAll": "Download all",
+    "searchByName": "Search by name",
+    "aiFilters": "AI Filters",
+    "quickActions": "Quick Actions",
+    "results": "results",
+    "activeFilters": "AI filters active",
+    "noResults": "No photos match your search"
+  },
+  "cart": {
+    "title": "Selection Cart",
+    "photosSelected": "photos selected",
+    "includedInPackage": "included in your package",
+    "extras": "extras",
+    "total": "Total",
+    "photos": "photos",
+    "additionalCost": "Additional cost",
+    "emptyCart": "Empty cart",
+    "finalizeSelection": "Finalize selection",
+    "empty": "Your cart is empty",
+    "addPhotos": "Select photos to add them to your cart",
+    "viewCart": "View cart",
+    "inCart": "in cart",
+    "addToCart": "Add to cart",
+    "removeFromCart": "Remove from cart",
+    "addedToCart": "Photo added to cart",
+    "removedFromCart": "Photo removed from cart",
+    "cartEmptied": "Cart emptied",
+    "selectionFinalized": "Selection finalized. Processing..."
+  },
+  "favorites": {
+    "addToFavorites": "Add to favorites",
+    "removeFromFavorites": "Remove from favorites",
+    "addedToFavorites": "Added to favorites",
+    "removedFromFavorites": "Removed from favorites",
+    "addedMultiple": "photos added to favorites"
+  },
+  "comments": {
+    "title": "Comments",
+    "addComment": "Add comment",
+    "placeholder": "Write a comment...",
+    "add": "Add",
+    "added": "Comment added",
+    "noComments": "No comments yet"
+  },
+  "photo": {
+    "tags": "Tags",
+    "aiInsights": "AI Insights",
+    "manualTags": "Manual tags",
+    "addTag": "Add tag",
+    "tagAdded": "Tag added"
+  },
+  "profile": {
+    "title": "My Profile",
+    "personalInfo": "Personal Information",
+    "subscription": "Subscription",
+    "active": "Active",
+    "temporary": "Temporary Access",
+    "expired": "Subscription Expired"
+  }
+}
+

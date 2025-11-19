@@ -68,10 +68,10 @@ export const AdminClientesPage = () => {
     <div className="space-y-10">
       <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.12em] text-black/40">
+          <p className="text-xs uppercase tracking-[0.06em] text-black/40">
             Vista maestra de clientes
           </p>
-          <h1 className="mt-4 text-4xl font-normal uppercase tracking-[0.16em] text-black">
+          <h1 className="mt-4 text-4xl font-normal uppercase tracking-[0.08em] text-black">
             Clientes
           </h1>
         </div>
@@ -119,14 +119,14 @@ export const AdminClientesPage = () => {
               value={query}
               onChange={handleSearch}
               placeholder="Buscar por nombre, email o teléfono"
-              className="w-full border border-black/10 bg-white py-3 pl-12 pr-4 text-xs uppercase tracking-[0.12em] text-black outline-none transition focus:border-black"
+              className="w-full border border-black/10 bg-white py-3 pl-12 pr-4 text-xs uppercase tracking-[0.06em] text-black outline-none transition focus:border-black"
             />
           </div>
           <div className="flex flex-wrap gap-3">
             <select
               value={tipoFilter}
               onChange={(event) => setTipoFilter(event.target.value as typeof tipoFilter)}
-              className="border border-black/10 bg-white px-6 py-3 text-xs uppercase tracking-[0.12em] text-black outline-none transition hover:border-black focus:border-black"
+              className="border border-black/10 bg-white px-6 py-3 text-xs uppercase tracking-[0.06em] text-black outline-none transition hover:border-black focus:border-black"
             >
               <option value="todos">Tipo: Todos</option>
               <option value="individual">Individual</option>
@@ -138,7 +138,7 @@ export const AdminClientesPage = () => {
               onChange={(event) =>
                 setSubscriptionFilter(event.target.value as typeof subscriptionFilter)
               }
-              className="border border-black/10 bg-white px-6 py-3 text-xs uppercase tracking-[0.12em] text-black outline-none transition hover:border-black focus:border-black"
+              className="border border-black/10 bg-white px-6 py-3 text-xs uppercase tracking-[0.06em] text-black outline-none transition hover:border-black focus:border-black"
             >
               <option value="todas">Suscripción: Todas</option>
               <option value="free_180_days">Free 180</option>
@@ -151,7 +151,7 @@ export const AdminClientesPage = () => {
         <div className="mt-8 overflow-hidden border border-black/10">
           <table className="min-w-full divide-y divide-black/10">
             <thead className="bg-black/5">
-              <tr className="text-[10px] uppercase tracking-[0.12em] text-black/40">
+              <tr className="text-[10px] uppercase tracking-[0.06em] text-black/40">
                 <th className="px-6 py-4 text-left">Cliente</th>
                 <th className="px-6 py-4 text-left">Teléfono</th>
                 <th className="px-6 py-4 text-left">Tipo</th>
@@ -162,7 +162,7 @@ export const AdminClientesPage = () => {
                 <th className="px-6 py-4" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-black/10 bg-white text-xs uppercase tracking-[0.12em] text-black/60">
+            <tbody className="divide-y divide-black/10 bg-white text-xs uppercase tracking-[0.06em] text-black/60">
               {filteredClientes.map((cliente) => {
                 const subscription = subscriptionLabels[cliente.status_subscription]
                 return (
@@ -173,10 +173,10 @@ export const AdminClientesPage = () => {
                   >
                     <td className="px-6 py-4">
                       <div>
-                        <p className="font-medium tracking-[0.12em] text-black">
+                        <p className="font-medium tracking-[0.06em] text-black">
                           {cliente.nombre_completo}
                         </p>
-                        <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-black/40">
+                        <p className="mt-1 text-[10px] uppercase tracking-[0.06em] text-black/40">
                           {cliente.email}
                         </p>
                       </div>
@@ -219,7 +219,7 @@ export const AdminClientesPage = () => {
             </tbody>
           </table>
           {filteredClientes.length === 0 ? (
-            <div className="p-10 text-center text-xs uppercase tracking-[0.12em] text-black/40">
+            <div className="p-10 text-center text-xs uppercase tracking-[0.06em] text-black/40">
               No encontramos clientes con esos filtros
             </div>
           ) : null}

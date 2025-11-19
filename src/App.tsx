@@ -8,9 +8,12 @@ import { useAuthStore } from './stores/authStore'
 import { useBookingStore } from './stores/bookingStore'
 import { useClienteStore } from './stores/clienteStore'
 import { useFotoStore } from './stores/fotoStore'
+import { usePaqueteStore } from './stores/paqueteStore'
+import { useCarritoStore } from './stores/carritoStore'
 import { AdminClientesPage } from './pages/admin/AdminClientesPage'
 import { AdminBookingsPage } from './pages/admin/AdminBookingsPage'
 import { AdminFotosPage } from './pages/admin/AdminFotosPage'
+import { AdminPaquetesPage } from './pages/admin/AdminPaquetesPage'
 import { AdminBookingDetailPage } from './pages/admin/AdminBookingDetailPage'
 import { AdminClienteDetailPage } from './pages/admin/AdminClienteDetailPage'
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
@@ -40,12 +43,14 @@ export const App = () => {
   const fetchClientes = useClienteStore((state) => state.fetchClientes)
   const fetchBookings = useBookingStore((state) => state.fetchBookings)
   const fetchFotos = useFotoStore((state) => state.fetchFotos)
+  const fetchPaquetes = usePaqueteStore((state) => state.fetchPaquetes)
 
   useEffect(() => {
     fetchClientes()
     fetchBookings()
     fetchFotos()
-  }, [fetchClientes, fetchBookings, fetchFotos])
+    fetchPaquetes()
+  }, [fetchClientes, fetchBookings, fetchFotos, fetchPaquetes])
 
   return (
     <BrowserRouter>
@@ -67,6 +72,7 @@ export const App = () => {
           <Route path="bookings" element={<AdminBookingsPage />} />
           <Route path="bookings/:bookingId" element={<AdminBookingDetailPage />} />
           <Route path="fotos" element={<AdminFotosPage />} />
+          <Route path="paquetes" element={<AdminPaquetesPage />} />
           <Route
             path="configuracion"
             element={<AdminDashboardPage bannerTitle="Configuración" />}
@@ -89,7 +95,7 @@ export const App = () => {
         </Route>
         <Route path="*" element={<Navigate to="/admin/login" replace />} />
       </Routes>
-      <Toaster richColors toastOptions={{ className: 'tracking-[0.14em] uppercase text-xs' }} />
+      <Toaster richColors toastOptions={{ className: 'tracking-[0.07em] uppercase text-xs' }} />
     </BrowserRouter>
   )
 }

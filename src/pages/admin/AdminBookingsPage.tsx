@@ -31,14 +31,26 @@ import Card from '../../components/common/Card'
 import Badge from '../../components/common/Badge'
 import { useBookingStore } from '../../stores/bookingStore'
 import { useFotoStore } from '../../stores/fotoStore'
+import { useClienteStore } from '../../stores/clienteStore'
 import type { BookingStatus, BucketType, Foto, SessionTipo } from '../../types'
 import { BRANDING_PORTRAIT_IMAGES, getBrandingImage } from '../../constants/branding'
 
-const statusLabels: Record<BookingStatus, { label: string; tone: 'success' | 'primary' | 'muted' | 'warning' }> = {
+const statusLabels: Record<BookingStatus, { label: string; tone: 'success' | 'primary' | 'muted' | 'warning' | 'danger' }> = {
+  sesion_agendada: { label: 'Sesión Agendada', tone: 'warning' },
+  concluyo_sesion: { label: 'Concluyó Sesión', tone: 'primary' },
+  index_preparado: { label: 'Index Preparado', tone: 'primary' },
+  index_enviado: { label: 'Index Enviado', tone: 'primary' },
+  seleccion_cliente: { label: 'Selección Cliente', tone: 'warning' },
+  fotos_extra: { label: 'Fotos Extra', tone: 'warning' },
+  produccion: { label: 'Producción', tone: 'primary' },
+  edicion_vobo: { label: 'Edición VoBo', tone: 'primary' },
+  enviado_impresion: { label: 'Enviado Impresión', tone: 'primary' },
+  fotos_en_estudio: { label: 'Fotos en Estudio', tone: 'primary' },
+  entregado: { label: 'Entregado', tone: 'success' },
+  // Estados legacy (por compatibilidad)
   programado: { label: 'Programado', tone: 'warning' },
   completado: { label: 'Completado', tone: 'primary' },
   procesando: { label: 'Procesando', tone: 'primary' },
-  entregado: { label: 'Entregado', tone: 'success' },
 }
 
 const tipoLabels: Record<SessionTipo, string> = {
@@ -54,7 +66,7 @@ const getBookingCover = (
   bookingId: string,
   getFotosByBooking: (bookingId: string, bucket?: BucketType) => Foto[],
 ) => {
-  const fotos = getFotosByBooking(bookingId, 'output')
+  const fotos = getFotosByBooking(bookingId, 'index')
   return fotos[0]?.url_miniatura ?? null
 }
 
@@ -62,8 +74,12 @@ export const AdminBookingsPage = () => {
   const navigate = useNavigate()
   const { bookings, viewMode, setViewMode } = useBookingStore()
   const getFotosByBooking = useFotoStore((state) => state.getFotosByBooking)
+  const { clientes } = useClienteStore()
   const [statusFilter, setStatusFilter] = useState<'todos' | BookingStatus>('todos')
   const [tipoFilter, setTipoFilter] = useState<'todos' | SessionTipo>('todos')
+  const [clienteFilter, setClienteFilter] = useState<'todos' | string>('todos')
+  const [yearFilter, setYearFilter] = useState<number | 'todos'>('todos')
+  const [monthFilter, setMonthFilter] = useState<number | 'todos'>('todos')
   const [search, setSearch] = useState('')
   const [calendarMonth, setCalendarMonth] = useState(() => startOfMonth(new Date()))
   const [selectedDay, setSelectedDay] = useState<Date | null>(startOfToday())
@@ -94,13 +110,25 @@ export const AdminBookingsPage = () => {
     return enhancedBookings.filter((booking) => {
       const statusOk = statusFilter === 'todos' || booking.status === statusFilter
       const tipoOk = tipoFilter === 'todos' || booking.tipo_sesion === tipoFilter
+      const clienteOk = clienteFilter === 'todos' || booking.cliente_id === clienteFilter
+      const yearOk =
+        yearFilter === 'todos' || new Date(booking.fecha_sesion).getFullYear() === yearFilter
+      const monthOk =
+        monthFilter === 'todos' || new Date(booking.fecha_sesion).getMonth() + 1 === monthFilter
       const searchOk =
         search.trim().length === 0 ||
         booking.nombre_sesion.toLowerCase().includes(search.toLowerCase()) ||
-        booking.ubicacion.toLowerCase().includes(search.toLowerCase())
-      return statusOk && tipoOk && searchOk
+        booking.ubicacion.toLowerCase().includes(search.toLowerCase()) ||
+        (() => {
+          const cliente = clientes.find((c) => c.id === booking.cliente_id)
+          return cliente
+            ? cliente.nombre_completo.toLowerCase().includes(search.toLowerCase()) ||
+                cliente.email.toLowerCase().includes(search.toLowerCase())
+            : false
+        })()
+      return statusOk && tipoOk && clienteOk && yearOk && monthOk && searchOk
     })
-  }, [enhancedBookings, statusFilter, tipoFilter, search])
+  }, [enhancedBookings, statusFilter, tipoFilter, clienteFilter, yearFilter, monthFilter, search, clientes])
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value)
@@ -154,7 +182,7 @@ export const AdminBookingsPage = () => {
       <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm font-medium text-slate-500">Agenda de sesiones</p>
-          <h1 className="mt-2 text-3xl font-heading font-semibold tracking-[0.28em] text-slate-900">
+          <h1 className="mt-2 text-3xl font-heading font-semibold tracking-[0.14em] text-slate-900">
             Bookings
           </h1>
           <p className="mt-2 max-w-xl text-sm text-slate-600">
@@ -245,7 +273,7 @@ export const AdminBookingsPage = () => {
               </button>
             </div>
           </div>
-          <div className="mt-6 grid grid-cols-7 gap-2 text-center text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
+          <div className="mt-6 grid grid-cols-7 gap-2 text-center text-xs font-semibold uppercase tracking-[0.06em] text-slate-400">
             {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((label) => (
               <span key={label}>{label}</span>
             ))}
@@ -376,7 +404,7 @@ export const AdminBookingsPage = () => {
             <input
               value={search}
               onChange={handleSearchChange}
-              placeholder="Buscar por nombre de sesión o locación"
+              placeholder="Buscar por sesión, ubicación, cliente o email"
               className="w-full rounded-full border border-slate-200 bg-white py-3 pl-12 pr-4 text-sm text-slate-600 outline-none transition focus:border-slate-900"
             />
           </div>
@@ -387,10 +415,17 @@ export const AdminBookingsPage = () => {
               className="rounded-full border border-slate-200 bg-white px-6 py-3 text-sm text-slate-600 outline-none transition hover:border-slate-900 focus:border-slate-900"
             >
               <option value="todos">Status: Todos</option>
-              <option value="entregado">Entregados</option>
-              <option value="procesando">Procesando</option>
-              <option value="completado">Completados</option>
-              <option value="programado">Programados</option>
+              <option value="sesion_agendada">Sesión Agendada</option>
+              <option value="concluyo_sesion">Concluyó Sesión</option>
+              <option value="index_preparado">Index Preparado</option>
+              <option value="index_enviado">Index Enviado</option>
+              <option value="seleccion_cliente">Selección Cliente</option>
+              <option value="fotos_extra">Fotos Extra</option>
+              <option value="produccion">Producción</option>
+              <option value="edicion_vobo">Edición VoBo</option>
+              <option value="enviado_impresion">Enviado Impresión</option>
+              <option value="fotos_en_estudio">Fotos en Estudio</option>
+              <option value="entregado">Entregado</option>
             </select>
             <select
               value={tipoFilter}
@@ -404,6 +439,59 @@ export const AdminBookingsPage = () => {
               <option value="corporativo">Corporativo</option>
               <option value="evento">Evento</option>
               <option value="otro">Otro</option>
+            </select>
+            <select
+              value={clienteFilter}
+              onChange={(event) => setClienteFilter(event.target.value)}
+              className="rounded-full border border-slate-200 bg-white px-6 py-3 text-sm text-slate-600 outline-none transition hover:border-slate-900 focus:border-slate-900"
+            >
+              <option value="todos">Cliente: Todos</option>
+              {clientes.map((cliente) => (
+                <option key={cliente.id} value={cliente.id}>
+                  {cliente.nombre_completo}
+                </option>
+              ))}
+            </select>
+            <select
+              value={yearFilter}
+              onChange={(event) =>
+                setYearFilter(event.target.value === 'todos' ? 'todos' : parseInt(event.target.value))
+              }
+              className="rounded-full border border-slate-200 bg-white px-6 py-3 text-sm text-slate-600 outline-none transition hover:border-slate-900 focus:border-slate-900"
+            >
+              <option value="todos">Año: Todos</option>
+              {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+            <select
+              value={monthFilter}
+              onChange={(event) =>
+                setMonthFilter(event.target.value === 'todos' ? 'todos' : parseInt(event.target.value))
+              }
+              className="rounded-full border border-slate-200 bg-white px-6 py-3 text-sm text-slate-600 outline-none transition hover:border-slate-900 focus:border-slate-900"
+            >
+              <option value="todos">Mes: Todos</option>
+              {[
+                'Enero',
+                'Febrero',
+                'Marzo',
+                'Abril',
+                'Mayo',
+                'Junio',
+                'Julio',
+                'Agosto',
+                'Septiembre',
+                'Octubre',
+                'Noviembre',
+                'Diciembre',
+              ].map((month, index) => (
+                <option key={month} value={index + 1}>
+                  {month}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -429,8 +517,8 @@ export const AdminBookingsPage = () => {
                     <Badge tone="muted">{tipoLabels[booking.tipo_sesion]}</Badge>
                   </div>
                   <div className="absolute right-4 top-4">
-                    <Badge tone={statusLabels[booking.status].tone}>
-                      {statusLabels[booking.status].label}
+                    <Badge tone={statusLabels[booking.status]?.tone || 'muted'}>
+                      {statusLabels[booking.status]?.label || booking.status}
                     </Badge>
                   </div>
                 </div>
@@ -461,14 +549,14 @@ export const AdminBookingsPage = () => {
         ) : (
           <div className="mt-8 overflow-hidden rounded-3xl border border-slate-200">
             <table className="min-w-full divide-y divide-slate-100">
-              <thead className="bg-slate-50 text-xs uppercase tracking-[0.12em] text-slate-400">
+              <thead className="bg-slate-50 text-xs uppercase tracking-[0.06em] text-slate-400">
                 <tr>
                   <th className="px-6 py-4 text-left">Sesión</th>
                   <th className="px-6 py-4 text-left">Fecha</th>
                   <th className="px-6 py-4 text-left">Tipo</th>
                   <th className="px-6 py-4 text-left">Status</th>
                   <th className="px-6 py-4 text-left">Cliente</th>
-                  <th className="px-6 py-4 text-left">Fotos OUTPUT</th>
+                  <th className="px-6 py-4 text-left">Fotos INDEX</th>
                   <th className="px-6 py-4 text-left">Acciones</th>
                 </tr>
               </thead>
@@ -490,8 +578,8 @@ export const AdminBookingsPage = () => {
                       <Badge tone="muted">{tipoLabels[booking.tipo_sesion]}</Badge>
                     </td>
                     <td className="px-6 py-4">
-                      <Badge tone={statusLabels[booking.status].tone}>
-                        {statusLabels[booking.status].label}
+                      <Badge tone={statusLabels[booking.status]?.tone || 'muted'}>
+                        {statusLabels[booking.status]?.label || booking.status}
                       </Badge>
                     </td>
                     <td className="px-6 py-4">

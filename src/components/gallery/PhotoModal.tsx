@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { LuDownload, LuMoveRight, LuTrash2, LuX } from 'react-icons/lu'
+import { LuDownload, LuHeart, LuMessageSquare, LuMoveRight, LuShoppingCart, LuTrash2, LuX } from 'react-icons/lu'
+import { formatISO } from 'date-fns'
 import Badge from '../common/Badge'
 import Button from '../common/Button'
 import type { BucketType, Foto } from '../../types'
@@ -14,6 +15,11 @@ interface PhotoModalProps {
   allowBucketChange?: boolean
   buckets?: BucketType[]
   clientView?: boolean
+  onToggleFavorite?: () => void
+  onToggleCarrito?: () => void
+  estaEnCarrito?: boolean
+  onAgregarComentario?: (texto: string) => void
+  carrito?: unknown[]
 }
 
 const bucketLabels: Record<
@@ -25,8 +31,8 @@ const bucketLabels: Record<
     description: 'Originales RAW • Visibilidad interna',
     tone: 'muted',
   },
-  output: {
-    label: 'Output',
+  index: {
+    label: 'Index',
     description: 'Fotos finales • Customer-facing',
     tone: 'success',
   },
@@ -49,10 +55,15 @@ export const PhotoModal = ({
   onMoveBucket,
   onDelete,
   allowBucketChange = true,
-  buckets = ['output', 'capture', 'selects', 'trash'],
+  buckets = ['index', 'capture', 'selects', 'trash'],
   clientView = false,
+  onToggleFavorite,
+  onToggleCarrito,
+  estaEnCarrito = false,
+  onAgregarComentario,
 }: PhotoModalProps) => {
-  const [targetBucket, setTargetBucket] = useState<BucketType>(foto?.bucket_tipo ?? 'output')
+  const [targetBucket, setTargetBucket] = useState<BucketType>(foto?.bucket_tipo ?? 'index')
+  const [nuevoComentario, setNuevoComentario] = useState('')
 
   useEffect(() => {
     if (foto) {
@@ -82,35 +93,35 @@ export const PhotoModal = ({
             <div className="relative flex items-center justify-center bg-slate-950">
               <button
                 onClick={onClose}
-                className="absolute left-4 top-4 inline-flex items-center rounded-full border border-white/20 px-3 py-2 text-xs uppercase tracking-[0.16em] text-white transition hover:bg-white/10"
+                className="absolute left-4 top-4 inline-flex items-center rounded-full border border-white/20 px-3 py-2 text-xs uppercase tracking-[0.08em] text-white transition hover:bg-white/10"
               >
                 <LuX /> Cerrar
               </button>
               <img src={foto.url_original} alt={foto.nombre_archivo} className="max-h-full max-w-full object-contain" />
-              <div className="absolute bottom-4 left-4 flex items-center gap-3 rounded-full border border-white/20 bg-black/50 px-5 py-3 text-[10px] uppercase tracking-[0.14em] text-white">
+              <div className="absolute bottom-4 left-4 flex items-center gap-3 rounded-full border border-white/20 bg-black/50 px-5 py-3 text-[10px] uppercase tracking-[0.07em] text-white">
                 {BucketBadge(foto.bucket_tipo)}
                 {foto.formato.toUpperCase()} • {(foto.tamano_bytes / 1_000_000).toFixed(1)} MB
               </div>
             </div>
             <div className="flex h-full flex-col overflow-y-auto bg-white">
               <div className="border-b border-slate-200 p-6">
-                <p className="text-[10px] uppercase tracking-[0.14em] text-slate-400">
+                <p className="text-[10px] uppercase tracking-[0.07em] text-slate-400">
                   {foto.nombre_archivo}
                 </p>
-                <h2 className="mt-3 text-xl font-semibold uppercase tracking-[0.14em] text-slate-900">
+                <h2 className="mt-3 text-xl font-semibold uppercase tracking-[0.07em] text-slate-900">
                   Información detallada
                 </h2>
-                <p className="mt-2 text-xs uppercase tracking-[0.16em] text-slate-500">
+                <p className="mt-2 text-xs uppercase tracking-[0.08em] text-slate-500">
                   Subida {new Date(foto.fecha_subida).toLocaleDateString()}
                 </p>
               </div>
               <div className="flex-1 space-y-6 overflow-y-auto p-6">
                 {foto.ai_insights ? (
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.14em] text-slate-400">
+                    <p className="text-[10px] uppercase tracking-[0.07em] text-slate-400">
                       AI Insights
                     </p>
-                    <div className="mt-4 grid gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-xs uppercase tracking-[0.16em] text-emerald-600">
+                    <div className="mt-4 grid gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-xs uppercase tracking-[0.08em] text-emerald-600">
                       <span>Caras detectadas: {foto.ai_insights.faces_count}</span>
                       <span>Quality score: {foto.ai_insights.quality_score}/10</span>
                       <span>Composition score: {foto.ai_insights.composition_score}/10</span>
@@ -130,20 +141,20 @@ export const PhotoModal = ({
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs uppercase tracking-[0.16em] text-slate-500">
-                    AI insights no disponibles para este bucket. Solo OUTPUT ejecuta etiquetado automático.
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs uppercase tracking-[0.08em] text-slate-500">
+                    AI insights no disponibles para este bucket. Solo INDEX ejecuta etiquetado automático.
                   </div>
                 )}
                 {foto.ai_tags?.length ? (
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.14em] text-slate-400">
+                    <p className="text-[10px] uppercase tracking-[0.07em] text-slate-400">
                       AI tags automáticos
                     </p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       {foto.ai_tags.map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full bg-slate-900 px-4 py-2 text-[10px] uppercase tracking-[0.14em] text-white"
+                          className="rounded-full bg-slate-900 px-4 py-2 text-[10px] uppercase tracking-[0.07em] text-white"
                         >
                           #{tag}
                         </span>
@@ -153,12 +164,12 @@ export const PhotoModal = ({
                 ) : null}
                 {foto.ai_insights?.dominant_colors?.length ? (
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.14em] text-slate-400">
+                    <p className="text-[10px] uppercase tracking-[0.07em] text-slate-400">
                       Colores dominantes
                     </p>
                     <div className="mt-4 flex gap-2">
                       {foto.ai_insights.dominant_colors.map((color) => (
-                        <div key={color} className="flex flex-col items-center gap-2 text-[10px] uppercase tracking-[0.16em] text-slate-500">
+                        <div key={color} className="flex flex-col items-center gap-2 text-[10px] uppercase tracking-[0.08em] text-slate-500">
                           <span
                             className="h-10 w-10 rounded-full border border-slate-200"
                             style={{ backgroundColor: color }}
@@ -169,8 +180,100 @@ export const PhotoModal = ({
                     </div>
                   </div>
                 ) : null}
+                {clientView ? (
+                  <div className="border-t border-slate-200 pt-6">
+                    <div className="mb-4 flex items-center gap-2">
+                      <LuMessageSquare className="h-4 w-4 text-slate-400" />
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.07em] text-slate-400">
+                        Comentarios {foto.comentarios && foto.comentarios.length > 0 ? `(${foto.comentarios.length})` : ''}
+                      </p>
+                    </div>
+                    <div className="max-h-64 space-y-3 overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      {foto.comentarios && foto.comentarios.length > 0 ? (
+                        foto.comentarios.map((comentario) => (
+                          <div
+                            key={comentario.id}
+                            className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-xs font-semibold text-slate-800">{comentario.autor}</span>
+                              <span className="text-[10px] text-slate-400">
+                                {new Date(comentario.fecha).toLocaleDateString('es-MX', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-700 leading-relaxed">{comentario.texto}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="py-8 text-center text-xs text-slate-400">
+                          <LuMessageSquare className="mx-auto h-8 w-8 mb-2 opacity-50" />
+                          <p>No hay comentarios aún</p>
+                          <p className="mt-1 text-[10px]">Sé el primero en comentar</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : null}
+                {clientView && onAgregarComentario ? (
+                  <div className="mt-4 border-t border-slate-200 pt-4">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={nuevoComentario}
+                        onChange={(e) => setNuevoComentario(e.target.value)}
+                        placeholder="Escribe un comentario..."
+                        className="flex-1 rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-xs text-slate-700 outline-none transition focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && nuevoComentario.trim()) {
+                            onAgregarComentario(nuevoComentario.trim())
+                            setNuevoComentario('')
+                          }
+                        }}
+                      />
+                      <Button
+                        tone="primary"
+                        size="sm"
+                        iconLeft={<LuMessageSquare />}
+                        onClick={() => {
+                          if (nuevoComentario.trim()) {
+                            onAgregarComentario(nuevoComentario.trim())
+                            setNuevoComentario('')
+                          }
+                        }}
+                        disabled={!nuevoComentario.trim()}
+                      >
+                        Enviar
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
               </div>
               <div className="flex gap-3 border-t border-slate-200 bg-slate-50 px-6 py-5">
+                {clientView && onToggleFavorite ? (
+                  <Button
+                    tone={foto.is_favorite ? 'danger' : 'secondary'}
+                    size="sm"
+                    iconLeft={<LuHeart className={foto.is_favorite ? 'fill-current' : ''} />}
+                    onClick={onToggleFavorite}
+                  >
+                    {foto.is_favorite ? 'Quitar favorito' : 'Marcar favorito'}
+                  </Button>
+                ) : null}
+                {clientView && onToggleCarrito ? (
+                  <Button
+                    tone={estaEnCarrito ? 'success' : 'secondary'}
+                    size="sm"
+                    iconLeft={<LuShoppingCart />}
+                    onClick={onToggleCarrito}
+                  >
+                    {estaEnCarrito ? 'Quitar del carrito' : 'Agregar al carrito'}
+                  </Button>
+                ) : null}
                 <Button
                   tone="secondary"
                   size="sm"
@@ -182,7 +285,7 @@ export const PhotoModal = ({
                 {!clientView && allowBucketChange ? (
                   <div className="flex flex-1 items-center gap-3">
                     <select
-                      className="w-full rounded-full border border-slate-200 bg-white px-4 py-3 text-[10px] uppercase tracking-[0.16em] text-slate-500 outline-none transition hover:border-slate-900 focus:border-slate-900"
+                      className="w-full rounded-full border border-slate-200 bg-white px-4 py-3 text-[10px] uppercase tracking-[0.08em] text-slate-500 outline-none transition hover:border-slate-900 focus:border-slate-900"
                       value={targetBucket}
                       onChange={(event) => setTargetBucket(event.target.value as BucketType)}
                     >
@@ -219,7 +322,7 @@ export const PhotoModal = ({
 const BucketBadge = (bucket: BucketType) => (
   <Badge
     tone={
-      bucket === 'output'
+      bucket === 'index'
         ? 'success'
         : bucket === 'capture'
           ? 'muted'

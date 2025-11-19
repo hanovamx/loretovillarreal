@@ -65,8 +65,8 @@ export const AdminClienteDetailPage = () => {
             <LuUser className="text-3xl" />
           </div>
           <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-slate-400">Cliente</p>
-            <h1 className="mt-2 text-2xl font-semibold uppercase tracking-[0.22em] text-slate-900">
+            <p className="text-xs uppercase tracking-[0.10em] text-slate-400">Cliente</p>
+            <h1 className="mt-2 text-2xl font-semibold uppercase tracking-[0.10em] text-slate-900">
               {cliente.nombre_completo}
             </h1>
             <div className="mt-3 flex flex-wrap gap-3">
@@ -77,7 +77,7 @@ export const AdminClienteDetailPage = () => {
             </div>
           </div>
         </div>
-        <div className="grid gap-4 text-sm uppercase tracking-[0.14em] text-slate-500">
+        <div className="grid gap-4 text-sm uppercase tracking-[0.07em] text-slate-500">
           <span className="flex items-center gap-2">
                 <LuMail className="text-slate-400" /> {cliente.email}
           </span>
@@ -102,7 +102,7 @@ export const AdminClienteDetailPage = () => {
         <MetricCard
           title="Fotos entregadas"
           value={metrics.totalFotos}
-          subValue="Bucket OUTPUT"
+          subValue="Bucket INDEX"
           icon={<LuUser />}
           accent="emerald"
         />
@@ -122,7 +122,7 @@ export const AdminClienteDetailPage = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`rounded-full px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.14em] transition ${activeTab === tab.id ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-500'}`}
+                className={`rounded-full px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.07em] transition ${activeTab === tab.id ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-500'}`}
               >
                 {tab.label}
               </button>
@@ -142,10 +142,10 @@ export const AdminClienteDetailPage = () => {
                     >
                       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div>
-                          <p className="text-xs uppercase tracking-[0.22em] text-slate-400">
+                          <p className="text-xs uppercase tracking-[0.10em] text-slate-400">
                             {new Date(booking.fecha_sesion).toLocaleDateString()}
                           </p>
-                          <h3 className="mt-2 text-lg font-semibold uppercase tracking-[0.14em] text-slate-800">
+                          <h3 className="mt-2 text-lg font-semibold uppercase tracking-[0.07em] text-slate-800">
                             {booking.nombre_sesion}
                           </h3>
                           <div className="mt-3 flex flex-wrap gap-2">
@@ -163,8 +163,8 @@ export const AdminClienteDetailPage = () => {
                             </Badge>
                           </div>
                         </div>
-                        <div className="grid gap-2 text-right text-[10px] uppercase tracking-[0.14em] text-slate-400">
-                          <p>{booking.total_fotos_customer_facing} fotos OUTPUT</p>
+                        <div className="grid gap-2 text-right text-[10px] uppercase tracking-[0.07em] text-slate-400">
+                          <p>{booking.total_fotos_customer_facing} fotos INDEX</p>
                           <p>{booking.total_fotos_procesadas} procesadas</p>
                           <p>{booking.total_fotos_capturadas} capturadas</p>
                         </div>
@@ -175,7 +175,7 @@ export const AdminClienteDetailPage = () => {
             ) : null}
             {activeTab === 'contacto' ? (
               <div className="grid gap-6 md:grid-cols-2">
-                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-xs uppercase tracking-[0.14em] text-slate-500">
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-xs uppercase tracking-[0.07em] text-slate-500">
                   <p className="text-slate-400">Contacto directo</p>
                   <p className="mt-4 text-slate-700">{cliente.email}</p>
                   <p className="mt-2 text-slate-700">{cliente.telefono}</p>
@@ -186,7 +186,7 @@ export const AdminClienteDetailPage = () => {
                       : 'Prefiere comunicación por WhatsApp con recordatorios 48h antes.'}
                   </p>
                 </div>
-                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-xs uppercase tracking-[0.14em] text-slate-500">
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-xs uppercase tracking-[0.07em] text-slate-500">
                   <p className="text-slate-400">Notas internas</p>
                   <p className="mt-4 text-slate-600">
                     Programar seguimiento automático posterior a cada entrega para promover plan
@@ -196,7 +196,7 @@ export const AdminClienteDetailPage = () => {
               </div>
             ) : null}
             {activeTab === 'actividad' ? (
-              <div className="space-y-4 text-xs uppercase tracking-[0.14em] text-slate-500">
+              <div className="space-y-4 text-xs uppercase tracking-[0.07em] text-slate-500">
                 <p>• Login reciente en portal cliente hace 3 días.</p>
                 <p>• Descargó 12 fotos destacadas de su graduación.</p>
                 <p>• Solicitó upgrade a plan premium en Q1.</p>

@@ -29,12 +29,12 @@ export const MetricCard = ({
     <div className="rounded-none border border-black/10 bg-white p-8 shadow-none">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.14em] text-black/50">
+          <p className="text-[11px] uppercase tracking-[0.07em] text-black/50">
             {title}
           </p>
           <p className="mt-4 text-4xl font-normal tracking-[0.08em] text-black">{value}</p>
           {subValue ? (
-            <p className="mt-3 text-[11px] uppercase tracking-[0.12em] text-black/45">{subValue}</p>
+            <p className="mt-3 text-[11px] uppercase tracking-[0.06em] text-black/45">{subValue}</p>
           ) : null}
         </div>
         {icon ? (

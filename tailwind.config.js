@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Arimo"', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+        sans: ['"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
         heading: ['"Imperial Urw"', '"Times New Roman"', 'serif'],
       },
       colors: {
