@@ -154,7 +154,7 @@ export const AdminClienteDetailPage = () => {
                               tone={
                                 booking.status === 'entregado'
                                   ? 'success'
-                                  : booking.status === 'procesando'
+                                  : booking.status === 'produccion' || booking.status === 'edicion_vobo'
                                     ? 'primary'
                                     : 'muted'
                               }

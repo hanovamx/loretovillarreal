@@ -47,10 +47,6 @@ const statusLabels: Record<BookingStatus, { label: string; tone: 'success' | 'pr
   enviado_impresion: { label: 'Enviado Impresión', tone: 'primary' },
   fotos_en_estudio: { label: 'Fotos en Estudio', tone: 'primary' },
   entregado: { label: 'Entregado', tone: 'success' },
-  // Estados legacy (por compatibilidad)
-  programado: { label: 'Programado', tone: 'warning' },
-  completado: { label: 'Completado', tone: 'primary' },
-  procesando: { label: 'Procesando', tone: 'primary' },
 }
 
 const tipoLabels: Record<SessionTipo, string> = {
@@ -96,8 +92,12 @@ export const AdminBookingsPage = () => {
 
   const metrics = useMemo(() => {
     const entregados = enhancedBookings.filter((booking) => booking.status === 'entregado').length
-    const proximos = enhancedBookings.filter((booking) => booking.status === 'programado').length
-    const procesando = enhancedBookings.filter((booking) => booking.status === 'procesando').length
+    const proximos = enhancedBookings.filter((booking) => 
+      booking.status === 'sesion_agendada' || booking.status === 'seleccion_cliente'
+    ).length
+    const procesando = enhancedBookings.filter((booking) => 
+      booking.status === 'produccion' || booking.status === 'edicion_vobo'
+    ).length
     return {
       total: enhancedBookings.length,
       entregados,

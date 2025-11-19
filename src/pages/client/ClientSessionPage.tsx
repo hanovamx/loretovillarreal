@@ -169,9 +169,10 @@ export const ClientSessionPage = () => {
   const handleAgregarSeleccionadasAlCarrito = () => {
     if (!bookingId || !user?.clienteId) return
     let agregadas = 0
+    const clienteId = user.clienteId
     selectedIds.forEach((fotoId) => {
       if (!estaEnCarrito(fotoId)) {
-        agregarAlCarrito(bookingId, fotoId, user.clienteId)
+        agregarAlCarrito(bookingId, fotoId, clienteId)
         agregadas++
       }
     })

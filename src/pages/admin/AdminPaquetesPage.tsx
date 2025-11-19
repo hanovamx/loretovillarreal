@@ -51,10 +51,7 @@ export const AdminPaquetesPage = () => {
   const handleUpdate = (id: string) => {
     const paquete = paquetes.find((p) => p.id === id)
     if (!paquete) return
-    actualizarPaquete({
-      ...paquete,
-      ...formData,
-    })
+    actualizarPaquete(id, formData)
     toast.success('Paquete actualizado')
     setEditingId(null)
     setFormData({

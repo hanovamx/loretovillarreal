@@ -5,7 +5,7 @@ import type { CarritoSeleccion } from '../types'
 interface CarritoStoreState {
   carrito: CarritoSeleccion[]
   initialized: boolean
-  fetchCarrito: (bookingId: string, clienteId: string) => Promise<void>
+  fetchCarrito: () => Promise<void>
   agregarAlCarrito: (bookingId: string, fotoId: string, clienteId: string) => void
   quitarDelCarrito: (fotoId: string) => void
   getCarritoPorBooking: (bookingId: string) => CarritoSeleccion[]
@@ -17,7 +17,7 @@ interface CarritoStoreState {
 export const useCarritoStore = create<CarritoStoreState>((set, get) => ({
   carrito: [],
   initialized: false,
-  fetchCarrito: async (bookingId, clienteId) => {
+  fetchCarrito: async () => {
     // Mock: simular carga de carrito
     await new Promise((resolve) => setTimeout(resolve, 200))
     // En producción, esto vendría de Supabase

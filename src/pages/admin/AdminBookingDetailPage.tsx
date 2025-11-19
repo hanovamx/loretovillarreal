@@ -63,7 +63,6 @@ export const AdminBookingDetailPage = () => {
   const deleteFoto = useFotoStore((state) => state.deleteFoto)
   const uploadQueue = useFotoStore((state) => state.uploadQueue)
   const agregarTagManual = useFotoStore((state) => state.agregarTagManual)
-  const quitarTagManual = useFotoStore((state) => state.quitarTagManual)
   const { paquetes } = usePaqueteStore()
 
   const booking = bookingId ? getBookingById(bookingId) : undefined
@@ -606,7 +605,7 @@ export const AdminBookingDetailPage = () => {
                 <select
                   className="mt-4 w-full rounded-full border border-slate-200 bg-white px-4 py-2 text-xs uppercase tracking-[0.07em] text-slate-600 outline-none transition focus:border-slate-900"
                   value={booking.paquete_id || ''}
-                  onChange={(e) => {
+                  onChange={() => {
                     // TODO: Implementar actualización de paquete en booking
                     toast.info('Actualización de paquete pendiente de implementación')
                   }}
@@ -629,7 +628,7 @@ export const AdminBookingDetailPage = () => {
                     <input
                       type="checkbox"
                       checked={booking.rrss_authorized}
-                      onChange={(e) => {
+                      onChange={() => {
                         // TODO: Implementar actualización de autorización
                         toast.info('Actualización de autorización pendiente de implementación')
                       }}
@@ -643,7 +642,7 @@ export const AdminBookingDetailPage = () => {
                     <input
                       type="checkbox"
                       checked={booking.banco_imagenes_authorized}
-                      onChange={(e) => {
+                      onChange={() => {
                         // TODO: Implementar actualización de autorización
                         toast.info('Actualización de autorización pendiente de implementación')
                       }}
